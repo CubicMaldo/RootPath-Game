@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 
 Global="*res://assets/scripts/Global.gd"
 EventBus="*res://assets/scripts/core/EventBus.gd"
+SignalLens="*res://addons/signal_lens/autoload/signal_lens_autoload.gd"
 
 [display]
 
@@ -37,6 +38,10 @@ window/stretch/aspect="expand"
 [dotnet]
 
 project/assembly_name="EstructuraDatosII"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/signal_lens/plugin.cfg")
 
 [gui]
 
