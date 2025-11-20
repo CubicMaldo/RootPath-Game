@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ClippyEvent" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/clippy/ClippyEvent.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+event_type = 4
+level_id = "level_1"
+context_id = "first_minigame_complete"
+payload = {
+	"achievement_name": "Port Scanner Master",
+	"achievement_id": "port_scanner_complete",
+	"points_earned": 180
+}

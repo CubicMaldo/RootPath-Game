@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ClippyEvent" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/clippy/ClippyEvent.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+event_type = 0
+level_id = "tutorial_area"
+context_id = "tree_navigation_intro"
+payload = {
+	"section": "controls",
+	"step": 1
+}

@@ -1,0 +1,69 @@
+# Clippy Assistant - English Translation
+# Godot 4.5+ .po format
+# 
+# This file contains all translatable strings for the Clippy assistant
+# Load in Godot via Project Settings > Localization
+
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+# Error messages
+msgid "CLIPPY_ERROR_INVALID_EVENT"
+msgstr "I received an invalid event. Please check the event configuration."
+
+msgid "CLIPPY_ERROR_WRONG_ANSWER"
+msgstr "That's not quite right. Review the information carefully and try again."
+
+msgid "CLIPPY_ERROR_TIMEOUT"
+msgstr "Time's up! Don't worry, you can try again."
+
+msgid "CLIPPY_ERROR_INVALID_INPUT"
+msgstr "That input doesn't look valid. Check the required format and try again."
+
+msgid "CLIPPY_ERROR_GENERIC"
+msgstr "Something went wrong. Take a moment to review the challenge."
+
+msgid "CLIPPY_ERROR_HINT_SUGGESTION"
+msgstr "Need help? Try using the hint button for guidance."
+
+# Tutorial messages
+msgid "CLIPPY_TUTORIAL_START"
+msgstr "Welcome! Let me show you the basics:"
+
+msgid "CLIPPY_TUTORIAL_GENERIC"
+msgstr "Follow the on-screen instructions to get started."
+
+# Minigame messages
+msgid "CLIPPY_MINIGAME_START"
+msgstr "Starting {game} challenge!"
+
+msgid "CLIPPY_MINIGAME_GENERIC"
+msgstr "Time to test your {game} skills. Good luck!"
+
+# Progress messages
+msgid "CLIPPY_PROGRESS_HIGH"
+msgstr "Excellent progress! You're almost at the goal."
+
+msgid "CLIPPY_PROGRESS_MID"
+msgstr "You're halfway there! Keep up the good work."
+
+msgid "CLIPPY_PROGRESS_LOW"
+msgstr "Nice start! Keep exploring to make more progress."
+
+# Achievement messages
+msgid "CLIPPY_ACHIEVEMENT"
+msgstr "Achievement unlocked: {achievement}! Great job!"
+
+# Node navigation
+msgid "CLIPPY_NODE_ENTERED"
+msgstr "You've reached node: {node}"
+
+# Hints
+msgid "CLIPPY_HINT_GENERIC"
+msgstr "Think carefully about the information presented. Look for patterns and unusual details."
+
+# Game completion
+msgid "CLIPPY_GAME_COMPLETED"
+msgstr "Congratulations! You've completed the game. Excellent work on mastering these cybersecurity concepts!"

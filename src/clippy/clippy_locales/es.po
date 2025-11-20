@@ -1,0 +1,69 @@
+# Clippy Assistant - Spanish Translation
+# Godot 4.5+ .po format
+# 
+# Este archivo contiene todas las cadenas traducibles del asistente Clippy
+# Cargar en Godot via Project Settings > Localization
+
+msgid ""
+msgstr ""
+"Language: es\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+# Mensajes de error
+msgid "CLIPPY_ERROR_INVALID_EVENT"
+msgstr "Recibí un evento inválido. Por favor verifica la configuración del evento."
+
+msgid "CLIPPY_ERROR_WRONG_ANSWER"
+msgstr "No es del todo correcto. Revisa la información cuidadosamente e intenta nuevamente."
+
+msgid "CLIPPY_ERROR_TIMEOUT"
+msgstr "¡Se acabó el tiempo! No te preocupes, puedes intentarlo de nuevo."
+
+msgid "CLIPPY_ERROR_INVALID_INPUT"
+msgstr "Esa entrada no parece válida. Verifica el formato requerido e intenta de nuevo."
+
+msgid "CLIPPY_ERROR_GENERIC"
+msgstr "Algo salió mal. Tómate un momento para revisar el desafío."
+
+msgid "CLIPPY_ERROR_HINT_SUGGESTION"
+msgstr "¿Necesitas ayuda? Intenta usar el botón de pista para obtener orientación."
+
+# Mensajes de tutorial
+msgid "CLIPPY_TUTORIAL_START"
+msgstr "¡Bienvenido! Déjame mostrarte lo básico:"
+
+msgid "CLIPPY_TUTORIAL_GENERIC"
+msgstr "Sigue las instrucciones en pantalla para comenzar."
+
+# Mensajes de minijuegos
+msgid "CLIPPY_MINIGAME_START"
+msgstr "¡Iniciando desafío de {game}!"
+
+msgid "CLIPPY_MINIGAME_GENERIC"
+msgstr "Es hora de probar tus habilidades en {game}. ¡Buena suerte!"
+
+# Mensajes de progreso
+msgid "CLIPPY_PROGRESS_HIGH"
+msgstr "¡Excelente progreso! Casi llegas a la meta."
+
+msgid "CLIPPY_PROGRESS_MID"
+msgstr "¡Vas a la mitad! Sigue con el buen trabajo."
+
+msgid "CLIPPY_PROGRESS_LOW"
+msgstr "¡Buen comienzo! Continúa explorando para avanzar más."
+
+# Mensajes de logros
+msgid "CLIPPY_ACHIEVEMENT"
+msgstr "¡Logro desbloqueado: {achievement}! ¡Excelente trabajo!"
+
+# Navegación de nodos
+msgid "CLIPPY_NODE_ENTERED"
+msgstr "Has alcanzado el nodo: {node}"
+
+# Pistas
+msgid "CLIPPY_HINT_GENERIC"
+msgstr "Piensa cuidadosamente sobre la información presentada. Busca patrones y detalles inusuales."
+
+# Completar juego
+msgid "CLIPPY_GAME_COMPLETED"
+msgstr "¡Felicitaciones! Has completado el juego. ¡Excelente trabajo dominando estos conceptos de ciberseguridad!"

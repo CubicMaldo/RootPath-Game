@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://chrommxyoxqu4"]
+[gd_scene load_steps=22 format=3 uid="uid://chrommxyoxqu4"]
 
 [ext_resource type="Script" uid="uid://dxntma2y6cg4w" path="res://assets/scripts/core/navigation/desktop/Desktop.gd" id="1_06q4v"]
 [ext_resource type="Shader" uid="uid://g3alu3rvi1hs" path="res://assets/shaders/balatro.gdshader" id="1_13veq"]
@@ -12,6 +12,7 @@
 [ext_resource type="Resource" uid="uid://c3ex0nu2yuhy" path="res://resources/apps/PasswordCrackerApp.tres" id="7_pwdcrk"]
 [ext_resource type="Resource" uid="uid://c8t7yqn5lx4p2" path="res://resources/apps/PasswordStrengthTrainerApp.tres" id="8_pwstr"]
 [ext_resource type="Script" uid="uid://bxt7yys6lsvj2" path="res://assets/scripts/core/navigation/desktop/TaskbarMenuButton.gd" id="9_77w8n"]
+[ext_resource type="PackedScene" path="res://src/clippy/ClippyUI.tscn" id="15_lswqd"]
 [ext_resource type="Script" uid="uid://bxt7yys6lsvj1" path="res://scenes/desktop/retry.gd" id="16_gko5q"]
 [ext_resource type="Script" uid="uid://dojwlfdqy2cl0" path="res://scenes/desktop/gotomenu.gd" id="16_t8w61"]
 
@@ -321,6 +322,8 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_lswqd")
 text = "MENU PRINCIPAL"
 icon_alignment = 1
 script = ExtResource("16_t8w61")
+
+[node name="ClippyUI" parent="." instance=ExtResource("15_lswqd")]
 
 [connection signal="pressed" from="CanvasLayer/EndingScreen/Control2/Juego" to="CanvasLayer/EndingScreen/Control2/Juego" method="_on_pressed"]
 [connection signal="pressed" from="CanvasLayer/EndingScreen/Control2/Menu" to="CanvasLayer/EndingScreen/Control2/Menu" method="_on_pressed"]

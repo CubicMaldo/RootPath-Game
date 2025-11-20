@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://bd6sncl22y8db"]
+[gd_scene load_steps=7 format=3 uid="uid://bd6sncl22y8db"]
 
 [ext_resource type="Script" uid="uid://dnr4ilkegvrxp" path="res://scenes/menu/MainMenu.gd" id="1_main_menu"]
 [ext_resource type="Script" uid="uid://b21ns3whpr5x3" path="res://scenes/menu/TreeVisualEffect.gd" id="1_tree_effect"]
 [ext_resource type="Shader" uid="uid://g3alu3rvi1hs" path="res://assets/shaders/balatro.gdshader" id="2_s3dsm"]
+[ext_resource type="PackedScene" path="res://src/clippy/ClippyUI.tscn" id="4_2nud1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uwj7d"]
 shader = ExtResource("2_s3dsm")
@@ -101,6 +102,7 @@ unique_name_in_owner = true
 title = "🎮 Aventura Cibernética"
 initial_position = 2
 size = Vector2i(600, 250)
+ok_button_text = "¡Comenzar Misión!"
 dialog_text = "¡Bienvenido a la Aventura Cibernética!
 
 Tu misión es recuperar el control de la red y detener el ataque.
@@ -108,5 +110,6 @@ Tu misión es recuperar el control de la red y detener el ataque.
 Explora el sistema, completa desafíos de ciberseguridad y demuestra tus habilidades.
 
 ¡Buena suerte, agente!"
-ok_button_text = "¡Comenzar Misión!"
 dialog_autowrap = true
+
+[node name="ClippyUI" parent="." instance=ExtResource("4_2nud1")]
