@@ -25,7 +25,7 @@ var last_speed: float = 0.0
 
 # Phishing card data
 var card_data: PhishingCard = null
-var has_been_answered: bool = false  # Prevenir respuestas múltiples
+var has_been_answered: bool = false # Prevenir respuestas múltiples
 
 var tween_grab: Tween
 var tween_movement: Tween
@@ -61,7 +61,7 @@ func _duplicate_card_materials() -> void:
 
 func _update_pivot() -> void:
 	# Centrar el pivot para que la escala crezca desde el centro
-	await get_tree().process_frame  # Esperar un frame para que el tamaño esté disponible
+	await get_tree().process_frame # Esperar un frame para que el tamaño esté disponible
 	pivot_offset = size * 0.5
 
 func _process(_delta: float) -> void:
@@ -129,9 +129,9 @@ func destroy() -> void:
 	if lock_put_back:
 		return
 	lock_put_back = true
-	disabled = true  # Desactivar botón para evitar inputs
-	set_process(false)  # Detener procesamiento
-	mouse_filter = Control.MOUSE_FILTER_IGNORE  # Ignorar eventos del mouse
+	disabled = true # Desactivar botón para evitar inputs
+	set_process(false) # Detener procesamiento
+	mouse_filter = Control.MOUSE_FILTER_IGNORE # Ignorar eventos del mouse
 	
 	_kill_tween(tween_destroy)
 
@@ -159,8 +159,6 @@ func destroy() -> void:
 	flash_tween.tween_property(self, "modulate", Color.WHITE, 0.12).set_ease(Tween.EASE_IN)
 	await flash_tween.finished
 
-	# Sacudida rápida en posición global para que siempre se note
-	var shake_tween := create_tween()
 	# Desintegración: escala + rotación + dissolve + fade final en paralelo
 	tween_destroy = create_tween().set_parallel(true)
 	tween_destroy.tween_property(self, "scale", Vector2(0.85, 0.6), 0.7).set_delay(0.05).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BACK)
@@ -170,21 +168,19 @@ func destroy() -> void:
 	tween_destroy.tween_property(self, "modulate:a", 0.0, 0.25).set_delay(0.7)
 
 	tween_destroy.finished.connect(func():
-		shake_tween.kill()
 		destroyed.emit()
 		queue_free()
 	)
 
 func save_card() -> void:
 	## Animación de guardado: la carta se reduce y sale por la derecha
-	
 	# Prevenir múltiples llamadas y colisiones
 	if lock_put_back:
 		return
 	lock_put_back = true
-	disabled = true  # Desactivar botón para evitar inputs
-	set_process(false)  # Detener procesamiento
-	mouse_filter = Control.MOUSE_FILTER_IGNORE  # Ignorar eventos del mouse
+	disabled = true # Desactivar botón para evitar inputs
+	set_process(false) # Detener procesamiento
+	mouse_filter = Control.MOUSE_FILTER_IGNORE # Ignorar eventos del mouse
 	
 	_kill_tween(tween_destroy)
 	# Crear tween con múltiples propiedades

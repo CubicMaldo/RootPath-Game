@@ -14,15 +14,15 @@ signal game_finished(score: int, correct: int, incorrect: int)
 @export_group("Phishing Game")
 @export var card_database: CardDatabase
 @export var cards_per_game: int = 10
-@export var use_balanced_cards: bool = true  # Balancear phishing vs legítimos
-@export var card_template: PackedScene  # Template de carta para instanciar
-@export var spawn_jitter: float = 20.0  # Jitter inicial para evitar colisiones con el eliminador
+@export var use_balanced_cards: bool = true # Balancear phishing vs legítimos
+@export var card_template: PackedScene # Template de carta para instanciar
+@export var spawn_jitter: float = 20.0 # Jitter inicial para evitar colisiones con el eliminador
 
 # State
-var first_card : Card
+var first_card: Card
 var first_card_pos: Vector2
 var first_card_scale: Vector2
-var last_card : Card
+var last_card: Card
 
 # Game Stats
 var current_score: int = 0
@@ -72,7 +72,7 @@ func _setup_card_signals() -> void:
 			c.destroyed.connect(destroyed_cb)
 		c.answered.connect(on_card_answered)
 
-func _cache_card_properties() -> void:  # <-- RENOMBRADO Y EXPANDIDO
+func _cache_card_properties() -> void: # <-- RENOMBRADO Y EXPANDIDO
 	var card_count = _get_card_count()
 	if card_count == 0:
 		push_error("CardStack: No hay cartas en el contenedor %Cards")
@@ -86,7 +86,7 @@ func _cache_card_properties() -> void:  # <-- RENOMBRADO Y EXPANDIDO
 	# Cachear la posición LOCAL de la primera carta (relativa a su padre %Cards)
 	first_card_pos = first_card.position
 	first_card_scale = first_card.scale
-	last_card = _get_card_at_index(0)  # <-- CACHEAR ÚLTIMA CARTA
+	last_card = _get_card_at_index(0) # <-- CACHEAR ÚLTIMA CARTA
 
 func _cards_setup() -> void:
 	if not card_database:
@@ -134,10 +134,11 @@ func tween_bg_color(new_color: Color) -> void:
 # ============================================
 
 func update_cards(_thrown: bool = false, animated: bool = true) -> void:
-	_kill_tween_if_running(tween)
-	tween = _create_parallel_tween()
-	
 	var child_count: int = _get_card_count()
+	if child_count == 0:
+		return
+	
+	tween = _create_parallel_tween()
 	
 	# Actualizar referencias de cartas
 	first_card = _get_card_at_index(child_count - 1)
@@ -280,7 +281,7 @@ func _load_cards_from_database() -> void:
 				)
 				new_card.position += jitter
 			new_card.setup_from_data(card_data_list[i])
-			print("  - Carta %d: %s Is phishing: %s" % [i, card_data_list[i].card_title,card_data_list[i].is_phishing])
+			print("  - Carta %d: %s Is phishing: %s" % [i, card_data_list[i].card_title, card_data_list[i].is_phishing])
 			await get_tree().process_frame
 		else:
 			push_error("CardStack: No se pudo instanciar la carta %d" % i)
