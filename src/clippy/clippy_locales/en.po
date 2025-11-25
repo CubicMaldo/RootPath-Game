@@ -28,6 +28,15 @@ msgstr "Something went wrong. Take a moment to review the challenge."
 msgid "CLIPPY_ERROR_HINT_SUGGESTION"
 msgstr "Need help? Try using the hint button for guidance."
 
+msgid "CLIPPY_ERROR_CHALLENGE_FAILED"
+msgstr "That challenge didn't go our way. Review the clues and give it another shot."
+
+msgid "CLIPPY_ERROR_NAVIGATION_BLOCKED"
+msgstr "Navigation is paused while a challenge is active. Finish or cancel it to keep moving."
+
+msgid "CLIPPY_ERROR_GAME_OVER"
+msgstr "That run ended, but every attempt teaches something. Regroup and try again."
+
 # Tutorial messages
 msgid "CLIPPY_TUTORIAL_START"
 msgstr "Welcome! Let me show you the basics:"
@@ -42,6 +51,60 @@ msgstr "Starting {game} challenge!"
 msgid "CLIPPY_MINIGAME_GENERIC"
 msgstr "Time to test your {game} skills. Good luck!"
 
+msgid "CLIPPY_MINIGAME_EMAIL_INTRO"
+msgstr "📧 Email Phishing Detector is live."
+
+msgid "CLIPPY_MINIGAME_EMAIL_OBJECTIVE"
+msgstr "Review sender, subject, and body details to tag each message as safe or phishing."
+
+msgid "CLIPPY_MINIGAME_EMAIL_TIP"
+msgstr "Hover suspicious links and compare domains—legitimate services rarely scramble characters."
+
+msgid "CLIPPY_MINIGAME_PORT_SCANNER_INTRO"
+msgstr "🛰 Port Scanner Defender is spinning up."
+
+msgid "CLIPPY_MINIGAME_PORT_SCANNER_OBJECTIVE"
+msgstr "Match each service to the correct port range before the timer expires."
+
+msgid "CLIPPY_MINIGAME_PORT_SCANNER_TIP"
+msgstr "Anchor yourself on well-known ports (HTTP 80/443, SSH 22) to pace the scan."
+
+msgid "CLIPPY_MINIGAME_SQL_INJECTION_INTRO"
+msgstr "🗃 SQL Injection Lab is open."
+
+msgid "CLIPPY_MINIGAME_SQL_INJECTION_OBJECTIVE"
+msgstr "Inspect queries and sanitize every input to block malicious payloads."
+
+msgid "CLIPPY_MINIGAME_SQL_INJECTION_TIP"
+msgstr "Reject stacked statements or unescaped quotes—they usually signal an injection attempt."
+
+msgid "CLIPPY_MINIGAME_PASSWORD_CRACKER_INTRO"
+msgstr "🔐 Password Cracker Simulator activated."
+
+msgid "CLIPPY_MINIGAME_PASSWORD_CRACKER_OBJECTIVE"
+msgstr "Combine the clues to guess the password before attempts run out."
+
+msgid "CLIPPY_MINIGAME_PASSWORD_CRACKER_TIP"
+msgstr "Start with obvious substitutions, then escalate to wider brute-force patterns."
+
+msgid "CLIPPY_MINIGAME_NETWORK_DEFENDER_INTRO"
+msgstr "🌐 Network Defender is online."
+
+msgid "CLIPPY_MINIGAME_NETWORK_DEFENDER_OBJECTIVE"
+msgstr "Monitor traffic lanes and reroute suspicious packets before they breach the core."
+
+msgid "CLIPPY_MINIGAME_NETWORK_DEFENDER_TIP"
+msgstr "Prioritize anomalies on rarely used ports—they often hide the attack vector."
+
+msgid "CLIPPY_MINIGAME_PASSWORD_STRENGTH_INTRO"
+msgstr "🔑 Password Strength Trainer ready."
+
+msgid "CLIPPY_MINIGAME_PASSWORD_STRENGTH_OBJECTIVE"
+msgstr "Evaluate each password's robustness and suggest improvements."
+
+msgid "CLIPPY_MINIGAME_PASSWORD_STRENGTH_TIP"
+msgstr "Aim for long phrases with mixed symbols; randomness beats clever single words."
+
 # Progress messages
 msgid "CLIPPY_PROGRESS_HIGH"
 msgstr "Excellent progress! You're almost at the goal."
@@ -51,6 +114,39 @@ msgstr "You're halfway there! Keep up the good work."
 
 msgid "CLIPPY_PROGRESS_LOW"
 msgstr "Nice start! Keep exploring to make more progress."
+
+msgid "CLIPPY_PROGRESS_VISIT_START"
+msgstr "You're back at the root node {node}. Use it to plan the next branch."
+
+msgid "CLIPPY_PROGRESS_VISIT_CHALLENGE"
+msgstr "Challenge node {node} reached. Launch the app when you're ready to engage."
+
+msgid "CLIPPY_PROGRESS_VISIT_HINT"
+msgstr "Hint node {node} unlocked new intel. Check the revealed paths."
+
+msgid "CLIPPY_PROGRESS_VISIT_FINAL"
+msgstr "Goal node {node} is within reach. Complete the nearby challenge to finish the run."
+
+msgid "CLIPPY_PROGRESS_VISIT_GENERIC"
+msgstr "Progress recorded at {node}. Keep climbing the tree."
+
+msgid "CLIPPY_PROGRESS_DISCOVERED_NODE"
+msgstr "New branch found at {node}. Explore its children to push forward."
+
+msgid "CLIPPY_PROGRESS_SCORE_HINT"
+msgstr "Clue secured! +{delta} pts (total {score}). Use it to map the next step."
+
+msgid "CLIPPY_PROGRESS_SCORE_CHALLENGE"
+msgstr "Scouting that challenge granted +{delta} pts. Momentum is on your side (score {score})."
+
+msgid "CLIPPY_PROGRESS_SCORE_FINAL"
+msgstr "Goal progress rewarded +{delta} pts. You're now at {score} and closing in on victory."
+
+msgid "CLIPPY_PROGRESS_SCORE_GENERIC"
+msgstr "Score increased by +{delta} ({reason}). Current total: {score}."
+
+msgid "CLIPPY_NODE_UNKNOWN_LABEL"
+msgstr "this node"
 
 # Achievement messages
 msgid "CLIPPY_ACHIEVEMENT"

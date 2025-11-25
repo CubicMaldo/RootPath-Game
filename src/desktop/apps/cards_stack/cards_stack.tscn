@@ -1,0 +1,253 @@
+[gd_scene load_steps=17 format=3 uid="uid://d0mx4seqmfq4d"]
+
+[ext_resource type="Script" uid="uid://b78r2ssceaj43" path="res://src/cards_stack/interactions/CardStack.gd" id="1_ba6y3"]
+[ext_resource type="PackedScene" uid="uid://vm7jfk3vjddq" path="res://src/desktop/apps/cards_stack/card.tscn" id="1_bx0j3"]
+[ext_resource type="Shader" uid="uid://cfapckc8ogxkp" path="res://assets/shaders/moving_noise.gdshader" id="2_5wunl"]
+[ext_resource type="Resource" uid="uid://devxoe3vgxys7" path="res://src/cards_stack/resources/PhishingDatabase.tres" id="2_ulwbx"]
+[ext_resource type="Script" uid="uid://b5eftaf7816mp" path="res://src/cards_stack/interactions/AnswerArea.gd" id="3_ec1ar"]
+[ext_resource type="Texture2D" uid="uid://n4tx0g7o53sh" path="res://icon.svg" id="4_21vi3"]
+[ext_resource type="Texture2D" uid="uid://g8e7mm880dp" path="res://src/desktop/textures/icons8-hot-article-96(2).png" id="7_tiax0"]
+[ext_resource type="Texture2D" uid="uid://b5k31ar6l4vro" path="res://src/desktop/textures/icons8-document-96(1).png" id="8_lpt7s"]
+
+[sub_resource type="Gradient" id="Gradient_21vi3"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
+colors = PackedColorArray(0.3, 0.192, 0.192, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0.1992, 0.192, 0.3, 1)
+metadata/_snap_enabled = true
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ulwbx"]
+gradient = SubResource("Gradient_21vi3")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ec1ar"]
+shader = ExtResource("2_5wunl")
+shader_parameter/time_scale = 0.10000000475
+shader_parameter/noise_scale = 1.00000004424012
+shader_parameter/pattern_intensity = 1.0
+shader_parameter/pattern_offset = Vector2(0, 0)
+shader_parameter/warp_strength = 1.0
+shader_parameter/use_custom_colors = true
+shader_parameter/color_low = Color(0.212, 0, 0.212, 1)
+shader_parameter/color_mid = Color(0.1728, 0.22140001, 0.27, 1)
+shader_parameter/color_high = Color(1, 1, 1, 1)
+shader_parameter/color_mid_position = 0.5
+shader_parameter/octaves = 6
+shader_parameter/fbm_lacunarity = 2.0
+shader_parameter/fbm_gain = 0.5
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tiax0"]
+texture = ExtResource("4_21vi3")
+region_rect = Rect2(0.5398445, 0, 128.08957, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_21vi3"]
+size = Vector2(80, 1243.5)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_lpt7s"]
+texture = ExtResource("4_21vi3")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ec1ar"]
+size = Vector2(77, 1241)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tiax0"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 0.75)
+draw_center = false
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[node name="InApp" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ba6y3")
+card_database = ExtResource("2_ulwbx")
+cards_per_game = 5
+card_template = ExtResource("1_bx0j3")
+
+[node name="BG" type="ColorRect" parent="."]
+self_modulate = Color(1, 1, 1, 0.541176)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.3217278, 0.321728, 0.32172796, 1)
+
+[node name="TextureRect" type="TextureRect" parent="BG"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture1D_ulwbx")
+
+[node name="ColorRect" type="ColorRect" parent="BG"]
+material = SubResource("ShaderMaterial_ec1ar")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -24.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.07058824, 0.09019608, 0.10980392, 1)
+
+[node name="TopPoint" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = 80.0
+offset_right = 20.0
+offset_bottom = 120.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="PanelKill" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_tiax0")
+script = ExtResource("3_ec1ar")
+is_legitimate = false
+
+[node name="Area2D" type="Area2D" parent="PanelKill"]
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PanelKill/Area2D"]
+position = Vector2(-53.9375, 623.75)
+shape = SubResource("RectangleShape2D_21vi3")
+metadata/_edit_lock_ = true
+
+[node name="TextureRect" type="TextureRect" parent="PanelKill"]
+modulate = Color(0.5, 0.5, 0.5, 0.43137255)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 16.0
+offset_top = -32.0
+offset_right = 80.0
+offset_bottom = 32.0
+grow_vertical = 2
+texture = ExtResource("7_tiax0")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="PanelKeep" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_lpt7s")
+script = ExtResource("3_ec1ar")
+
+[node name="Area2D" type="Area2D" parent="PanelKeep"]
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PanelKeep/Area2D"]
+position = Vector2(42.5, 624.5)
+shape = SubResource("RectangleShape2D_ec1ar")
+metadata/_edit_lock_ = true
+
+[node name="TextureRect" type="TextureRect" parent="PanelKeep"]
+modulate = Color(0.5, 0.5, 0.5, 0.43137255)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -32.0
+offset_right = -16.0
+offset_bottom = 32.0
+grow_horizontal = 0
+grow_vertical = 2
+texture = ExtResource("8_lpt7s")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Cards" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -220.0
+offset_bottom = -220.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="game_over" type="ColorRect" parent="CanvasLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.14, 0.14, 0.14, 0.8235294)
+
+[node name="finish_text" type="Label" parent="CanvasLayer/game_over"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -184.0
+offset_top = -44.666668
+offset_right = 184.0
+offset_bottom = 44.666668
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 64
+text = "GAME OVER"
+
+[node name="Button" type="Button" parent="CanvasLayer/game_over"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -128.0
+offset_right = 64.0
+offset_bottom = -64.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/focus = SubResource("StyleBoxFlat_tiax0")
+
+[connection signal="area_entered" from="PanelKill/Area2D" to="PanelKill" method="_on_area_2d_area_entered"]
+[connection signal="area_entered" from="PanelKeep/Area2D" to="PanelKeep" method="_on_area_2d_area_entered"]
+[connection signal="pressed" from="CanvasLayer/game_over/Button" to="." method="_on_button_pressed_finish"]
+[connection signal="pressed" from="CanvasLayer/game_over/Button" to="." method="_on_finish_button_pressed"]

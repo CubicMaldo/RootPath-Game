@@ -16,7 +16,7 @@
 extends Node
 
 func _ready() -> void:
-	print("=" * 60)
+	print("=".repeat(60))
 	print("[TestClippyEmitter] Test emitter ready")
 	print("[TestClippyEmitter] Press keys to test Clippy:")
 	print("  T = Tutorial Start")
@@ -25,7 +25,7 @@ func _ready() -> void:
 	print("  P = Progress Update")
 	print("  A = Achievement")
 	print("  N = Navigation Ready")
-	print("=" * 60)
+	print("=".repeat(60))
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:

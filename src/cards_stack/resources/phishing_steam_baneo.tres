@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="PhishingCard" load_steps=2 format=3 uid="uid://cpoc86m6bi6t6"]
+
+[ext_resource type="Script" uid="uid://qdg33u4dk4hx" path="res://src/cards_stack/PhishingCard.gd" id="1_4hrsr"]
+
+
+[resource]
+script = ExtResource("1_4hrsr")
+card_title = "🎮 Notificación de Steam"
+card_color = Color(0.9, 0.25, 0.25, 1)
+sender_name = "Steam Support"
+sender_email = "support@steam-community.org"
+subject = "Tu cuenta ha sido reportada por actividad sospechosa, seras baneado"
+email_body = "Hola,
+
+Tu cuenta de Steam ha recibido MÚLTIPLES REPORTES por:
+- Uso de software no autorizado
+- Posible fraude en transacciones
+- Violación de términos de servicio
+
+CONSECUENCIAS:
+❌ Cuenta será BANEADA en 24 horas
+❌ Perderás acceso a TODOS tus juegos
+❌ Inventario será ELIMINADO permanentemente
+
+Para APELAR este baneo:
+
+1. Verifica tu identidad
+2. Proporciona información de pago
+3. Confirma propiedad de cuenta
+
+>>> APELAR BANEO AHORA <<<
+
+Datos requeridos:
+• Nombre de usuario y contraseña
+• Últimas transacciones
+• Código de Steam Guard
+
+URGENTE: Solo tienes 24 HORAS.
+
+Si ignoras este mensaje, tu cuenta será eliminada PERMANENTEMENTE junto con tu biblioteca de juegos valorada en $1,250 USD.
+
+Steam Support Team
+Ticket: STM-2025-9482"
+has_attachments = false
+is_phishing = true
+difficulty = 3
+points_correct = 125
+points_incorrect = -60
+phishing_indicators = ["Dominio falso: steam-community.org (oficial es steampowered.com)", "Steam NUNCA pide contraseña por email", "Urgencia extrema de 24 horas", "Amenaza con perder todos los juegos", "Solicita código de Steam Guard", "Steam no envía baneos sin evidencia clara"]
+explanation = "¡PHISHING DE GAMING! Estafa sofisticada:
+- Dominio falso: steam-community.org NO es oficial
+- Steam NUNCA solicita contraseñas o Steam Guard por email
+- Los baneos reales tienen proceso de apelación en steamcommunity.com
+- Usa miedo (perder biblioteca de juegos) para presionar
+- Steam Support se contacta SOLO a través de tickets en el sitio oficial
+
+Dominio real: steampowered.com o store.steampowered.com"
+card_id = "phishing_011"
+category = "gaming"

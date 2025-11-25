@@ -12,6 +12,7 @@
 class_name ClippyEvent
 extends Resource
 
+
 ## Event type enumeration
 enum EventType {
 	TUTORIAL_START, ## Fired when a tutorial section begins
@@ -40,6 +41,21 @@ enum EventType {
 ##   PROGRESS_UPDATE: {"completion": 0.75, "nodes_visited": 12}
 @export var payload: Dictionary = {}
 
+## Priority level for event processing
+enum Priority {
+	LOW = 0, ## Ambient hints, flavor text
+	NORMAL = 1, ## Tutorial steps, standard info
+	HIGH = 2, ## Achievements, minigame starts
+	CRITICAL = 3 ## Errors, warnings
+}
+
+## Priority of this event
+@export var priority: Priority = Priority.NORMAL
+
+## Time to live in seconds (0.0 = infinite)
+## If event sits in queue longer than this, it will be discarded
+@export var expiration_time: float = 0.0
+
 ## Timestamp when event was created (auto-set)
 var timestamp: float = 0.0
 
@@ -47,32 +63,33 @@ func _init() -> void:
 	timestamp = Time.get_ticks_msec() / 1000.0
 
 ## Validates that the event has required fields based on type
+## Now uses ClippyEventSchema for robust validation
 func is_valid() -> bool:
-	match event_type:
-		EventType.TUTORIAL_START:
-			return context_id != ""
-		EventType.MINI_GAME_START:
-			return context_id != "" and payload.has("game_type")
-		EventType.PLAYER_ERROR:
-			return payload.has("error_code")
-		EventType.PROGRESS_UPDATE:
-			return payload.has("completion")
-		EventType.ACHIEVEMENT:
-			return context_id != ""
-		EventType.TREE_NODE_ENTERED:
-			return context_id != ""
-		EventType.HINT_REQUESTED:
-			return true # No specific requirements
-		EventType.GAME_COMPLETED:
-			return true
-		_:
-			return false
+	var result = ClippyEventSchema.validate_event(self)
+	
+	# Print validation errors for debugging
+	if not result.valid:
+		push_warning("ClippyEvent validation failed: %s" % get_description())
+		for error in result.errors:
+			push_warning("  - %s" % error)
+	
+	# Print warnings if any
+	if not result.warnings.is_empty():
+		for warning in result.warnings:
+			push_warning("  ⚠ %s" % warning)
+	
+	return result.valid
+
+## Get detailed validation result (for debugging and testing)
+func validate_detailed() -> ClippyEventSchema.ValidationResult:
+	return ClippyEventSchema.validate_event(self)
 
 ## Returns a human-readable description of the event (for debugging)
 func get_description() -> String:
 	var type_name = EventType.keys()[event_type]
-	return "ClippyEvent[%s | level=%s | context=%s | payload=%s]" % [
-		type_name, level_id, context_id, str(payload)
+	var priority_name = Priority.keys()[priority]
+	return "ClippyEvent[%s | prio=%s | level=%s | context=%s | payload=%s]" % [
+		type_name, priority_name, level_id, context_id, str(payload)
 	]
 
 ## Serializes event to Dictionary for saving/networking
@@ -82,7 +99,9 @@ func to_dict() -> Dictionary:
 		"level_id": level_id,
 		"context_id": context_id,
 		"payload": payload,
-		"timestamp": timestamp
+		"timestamp": timestamp,
+		"priority": priority,
+		"expiration_time": expiration_time
 	}
 
 ## Deserializes event from Dictionary
@@ -93,4 +112,6 @@ static func from_dict(data: Dictionary) -> ClippyEvent:
 	event.context_id = data.get("context_id", "")
 	event.payload = data.get("payload", {})
 	event.timestamp = data.get("timestamp", 0.0)
+	event.priority = data.get("priority", Priority.NORMAL)
+	event.expiration_time = data.get("expiration_time", 0.0)
 	return event

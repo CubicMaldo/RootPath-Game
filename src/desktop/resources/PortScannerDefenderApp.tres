@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AppStats" load_steps=4 format=3 uid="uid://l5loutjkf6tw"]
+
+[ext_resource type="Texture2D" uid="uid://c8n5p7rar1t3v" path="res://src/desktop/textures/password-lock-icon.svg" id="1_icon"]
+[ext_resource type="PackedScene" path="res://src/minigames/port_scanner/PortScannerDefender.tscn" id="2_scene"]
+[ext_resource type="Script" uid="uid://idvitonl6kt2" path="res://src/desktop/AppStats.gd" id="3_script"]
+
+[resource]
+script = ExtResource("3_script")
+scene = ExtResource("2_scene")
+size = Vector2(1100, 800)
+app_name = "Port Scanner Defender"
+icon = ExtResource("1_icon")
+metadata/_custom_type_script = "uid://idvitonl6kt2"

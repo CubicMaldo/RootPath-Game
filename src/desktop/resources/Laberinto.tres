@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="AppStats" load_steps=3 format=3 uid="uid://xe0xib01ijkp"]
+
+[ext_resource type="Script" uid="uid://idvitonl6kt2" path="res://src/desktop/AppStats.gd" id="1_fwkfb"]
+[ext_resource type="Texture2D" uid="uid://n4tx0g7o53sh" path="res://icon.svg" id="1_tnqx1"]
+
+[resource]
+script = ExtResource("1_fwkfb")
+icon = ExtResource("1_tnqx1")
+metadata/_custom_type_script = "uid://idvitonl6kt2"

@@ -20,8 +20,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Global="*res://assets/scripts/Global.gd"
-EventBus="*res://assets/scripts/core/EventBus.gd"
+Global="*res://src/autoloads/Global.gd"
+EventBus="*res://src/autoloads/EventBus.gd"
 SignalLens="*res://addons/signal_lens/autoload/signal_lens_autoload.gd"
 Clippy="*res://src/clippy/ClippyController.gd"
 ClippyBridge="*res://src/clippy/ClippyEventBridge.gd"
@@ -43,11 +43,16 @@ project/assembly_name="EstructuraDatosII"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/signal_lens/plugin.cfg")
+enabled=PackedStringArray("res://addons/signal_lens/plugin.cfg", "res://addons/gut/plugin.cfg")
 
 [gui]
 
 theme/default_font_multichannel_signed_distance_field=true
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://src/clippy/clippy_locales/en.po", "res://src/clippy/clippy_locales/es.po")
+locale/default_locale="es"
 
 [rendering]
 

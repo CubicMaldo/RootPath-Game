@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="PhishingCard" load_steps=2 format=3 uid="uid://bg7thsi6gnn3q"]
+
+[ext_resource type="Script" uid="uid://qdg33u4dk4hx" path="res://src/cards_stack/PhishingCard.gd" id="1_4hrsr"]
+
+[resource]
+script = ExtResource("1_4hrsr")
+card_color = Color(0.3, 0.65, 0.85, 1)
+card_title = "🎓 Confirmación de Curso"
+subject = "Confirmación: Inscripción al curso de Marketing Digital"
+sender_name = "Universidad Virtual"
+sender_email = "inscripciones@universidadvirtual.edu.mx"
+email_body = "Estimado(a) estudiante,
+
+Su inscripción al curso ha sido confirmada:
+
+Curso: Marketing Digital Avanzado
+Modalidad: En línea
+Duración: 8 semanas
+Inicio: 20 de Marzo, 2025
+Horario: Martes y Jueves 7:00 PM - 9:00 PM
+
+Instructor: Lic. Ana Martínez
+Costo ya pagado: $2,500 MXN
+
+Puede acceder a la plataforma en:
+https://campus.universidadvirtual.edu.mx
+
+Su usuario y contraseña se enviaron a su correo registrado.
+
+Para dudas, contacte a:
+soporte@universidadvirtual.edu.mx
+Tel: (55) 8765-4321
+
+¡Bienvenido!
+Coordinación Académica"
+points_correct = 75
+points_incorrect = -35
+explanation = "Email LEGÍTIMO de confirmación educativa:
+- Dominio .edu.mx verificado (educación mexicana)
+- Información específica y completa del curso
+- No solicita pagos adicionales (ya confirmado)
+- Proporciona contactos oficiales verificables
+- URL del campus es consistente con el dominio
+- Tono profesional académico"
+card_id = "legit_005"
+category = "education"

@@ -1,0 +1,160 @@
+[gd_scene load_steps=3 format=3 uid="uid://dxoap3m5k8wxy"]
+
+[ext_resource type="Script" uid="uid://slylm7rd7fcq" path="res://src/minigames/network_defender/network_defender.gd" id="1"]
+[ext_resource type="Resource" uid="uid://dowif7wxguhw7" path="res://src/minigames/network_defender/network_level_database.tres" id="2"]
+
+[node name="NetworkDefender" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+level_database = ExtResource("2")
+vidas_maximas = 3
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="TopBar" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="NivelLabel" type="Label" parent="Panel/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🎯 Nivel 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VidasLabel" type="Label" parent="Panel/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "❤️ Vidas: 5/5"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PuntosLabel" type="Label" parent="Panel/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "⭐ Puntos: 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TiempoLabel" type="Label" parent="Panel/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "⏱️ 00:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="ProgressContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/ProgressContainer"]
+layout_mode = 2
+text = "Progreso:"
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="Panel/VBoxContainer/ProgressContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+value = 50.0
+show_percentage = false
+
+[node name="ConnectionInfoContainer" type="PanelContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ConnectionInfoLabel" type="Label" parent="Panel/VBoxContainer/ConnectionInfoContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 28
+text = "IP: 192.168.1.100 | Puerto: 443 | Protocolo: HTTPS | Proceso: chrome.exe"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="HintContainer" type="PanelContainer" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="HintLabel" type="Label" parent="Panel/VBoxContainer/HintContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="ResultadoLabel" type="Label" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="BtnBloquear" type="Button" parent="Panel/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(180, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "🚫 Bloquear"
+
+[node name="BtnPermitir" type="Button" parent="Panel/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(180, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "✅ Permitir"
+
+[node name="BtnPista" type="Button" parent="Panel/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "💡 Pista"
+
+[node name="BtnSiguiente" type="Button" parent="Panel/VBoxContainer/ButtonsContainer"]
+visible = false
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "➡️ Siguiente"
+
+[node name="TimerJuego" type="Timer" parent="."]
+wait_time = 300.0
+one_shot = true
+
+[node name="TimerResultado" type="Timer" parent="."]
+wait_time = 2.5
+one_shot = true
+
+[connection signal="pressed" from="Panel/VBoxContainer/ButtonsContainer/BtnBloquear" to="." method="_on_btn_bloquear_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/ButtonsContainer/BtnPermitir" to="." method="_on_btn_permitir_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/ButtonsContainer/BtnPista" to="." method="_on_btn_pista_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/ButtonsContainer/BtnSiguiente" to="." method="_on_btn_siguiente_pressed"]
+[connection signal="timeout" from="TimerResultado" to="." method="_on_timer_resultado_timeout"]

@@ -1,0 +1,85 @@
+[gd_scene load_steps=3 format=3 uid="uid://bcqxfxlkk1o68"]
+
+[ext_resource type="Theme" uid="uid://dphug288uwuyp" path="res://src/minigames/Adivinanza/AdivinanzaTheme.tres" id="1_rrbmy"]
+[ext_resource type="Script" uid="uid://dr1bqlf1tggdu" path="res://src/minigames/password_cracker/password_cracker.gd" id="2_3drhf"]
+
+
+[node name="Adivinanza" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_rrbmy")
+script = ExtResource("2_3drhf")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 817.0
+offset_top = 135.0
+offset_right = 1074.0
+offset_bottom = 195.0
+theme_override_colors/font_color = Color(0.3529412, 1, 1, 1)
+text = "Adivinanza"
+
+[node name="Label2" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 462.0
+offset_top = 322.0
+offset_right = 1407.0
+offset_bottom = 425.0
+theme_override_font_sizes/font_size = 25
+text = "Aparentemente soy de Bancolombia, te envio correos pidiendo tu informacion bancaria y te ofrezco creidtos sospechosos"
+autowrap_mode = 3
+
+[node name="LineEdit" type="LineEdit" parent="Panel"]
+layout_mode = 0
+offset_left = 775.0
+offset_top = 524.0
+offset_right = 1128.0
+offset_bottom = 592.0
+theme_override_colors/font_color = Color(0.59478486, 0.9459732, 0.9575884, 1)
+theme_override_font_sizes/font_size = 25
+
+[node name="Button" type="Button" parent="Panel"]
+layout_mode = 0
+offset_left = 1024.0
+offset_top = 703.0
+offset_right = 1325.0
+offset_bottom = 771.0
+theme_override_colors/icon_pressed_color = Color(1, 0.29411766, 1, 1)
+text = "Responder
+"
+
+[node name="Label3" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 835.0
+offset_top = 333.0
+offset_right = 2658.0
+offset_bottom = 1397.0
+vertical_alignment = 1
+autowrap_mode = 1
+
+[node name="Timer" type="Timer" parent="Panel"]
+wait_time = 2.5
+one_shot = true
+
+[node name="Button2" type="Button" parent="Panel"]
+layout_mode = 0
+offset_left = 612.0
+offset_top = 701.0
+offset_right = 872.0
+offset_bottom = 769.0
+text = "salir"
+
+[connection signal="pressed" from="Panel/Button" to="." method="_on_button_pressed"]
+[connection signal="timeout" from="Panel/Timer" to="." method="_on_timer_timeout"]

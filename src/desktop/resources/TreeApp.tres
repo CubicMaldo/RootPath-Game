@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AppStats" load_steps=4 format=3 uid="uid://bxrjf5byddb2h"]
+
+[ext_resource type="Texture2D" uid="uid://diydnh370mhuk" path="res://src/desktop/textures/icons8-flow-chart-96.png" id="1_kpyoq"]
+[ext_resource type="PackedScene" uid="uid://s68a6a8aeg3c" path="res://src/tree/TreeApp.tscn" id="2_4rjvc"]
+[ext_resource type="Script" uid="uid://idvitonl6kt2" path="res://src/desktop/AppStats.gd" id="3_8ry13"]
+
+[resource]
+script = ExtResource("3_8ry13")
+scene = ExtResource("2_4rjvc")
+size = Vector2(600, 600)
+app_name = "Tree Map"
+icon = ExtResource("1_kpyoq")
+metadata/_custom_type_script = "uid://idvitonl6kt2"

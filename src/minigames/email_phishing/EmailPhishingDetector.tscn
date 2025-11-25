@@ -1,0 +1,160 @@
+[gd_scene load_steps=3 format=3 uid="uid://borpckajequbq"]
+
+[ext_resource type="Script" uid="uid://dpq7m3vlaxn2h" path="res://src/minigames/email_phishing/email_phishing_detector.gd" id="1"]
+[ext_resource type="Resource" uid="uid://daviwfc7c1kk2" path="res://src/minigames/email_phishing/email_database.tres" id="2"]
+
+[node name="EmailPhishingDetector" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+email_database = ExtResource("2")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopBar" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="VidasLabel" type="Label" parent="Panel/VBoxContainer/TopBar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "❤️ Vidas: 3"
+horizontal_alignment = 1
+
+[node name="PuntosLabel" type="Label" parent="Panel/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "⭐ Puntos: 0"
+horizontal_alignment = 1
+
+[node name="ProgresoLabel" type="Label" parent="Panel/VBoxContainer/TopBar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "📧 Email: 1/5"
+horizontal_alignment = 1
+
+[node name="TimerLabel" type="Label" parent="Panel/VBoxContainer/TopBar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Tiempo: 10:00"
+horizontal_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "📧 EMAIL PHISHING DETECTOR 🛡️"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Instrucciones" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Analiza cada correo y determina si es LEGÍTIMO o PHISHING"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="EmailHeader" type="VBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="SenderLabel" type="Label" parent="Panel/VBoxContainer/EmailHeader"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "De: remitente@ejemplo.com"
+
+[node name="SubjectLabel" type="Label" parent="Panel/VBoxContainer/EmailHeader"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Asunto: Título del correo"
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="BodyContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BodyLabel" type="Label" parent="Panel/VBoxContainer/BodyContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Cuerpo del mensaje:"
+
+[node name="BodyDisplay" type="TextEdit" parent="Panel/VBoxContainer/BodyContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 24
+editable = false
+wrap_mode = 1
+
+[node name="LinkContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="LinkLabel" type="Label" parent="Panel/VBoxContainer/LinkContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "🔗 Enlace: https://ejemplo.com"
+
+[node name="HintContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="HintLabel" type="Label" parent="Panel/VBoxContainer/HintContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "💡 Pista aparecerá aquí"
+autowrap_mode = 3
+
+[node name="ResultadoLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Resultado aparecerá aquí"
+autowrap_mode = 3
+
+[node name="HSeparator3" type="HSeparator" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="ButtonContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnLegitimo" type="Button" parent="Panel/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "✅ Email Legítimo"
+
+[node name="BtnPhishing" type="Button" parent="Panel/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "🚨 PHISHING Detectado"
+
+[node name="BtnPista" type="Button" parent="Panel/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "💡 Ver Pista"
+
+[node name="BtnSiguiente" type="Button" parent="Panel/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "➡️ Siguiente Email"

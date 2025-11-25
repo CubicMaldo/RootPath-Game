@@ -100,17 +100,19 @@ func _initialize_timeout_timer() -> void:
 func _load_documentation() -> void:
 	_resources.load_project_docs(readme_path)
 	
-	# Load minigame documentation
+	# Load minigame documentation (only if files exist)
 	var minigames = [
-		{"type": "port_scanner", "path": "res://scenes/minigames/port_scanner/README.md"},
-		{"type": "sql_injection", "path": "res://scenes/minigames/sql_injection/README.md"},
-		{"type": "email_phishing", "path": "res://scenes/minigames/email_phishing/README.md"},
-		{"type": "password_cracker", "path": "res://scenes/minigames/password_cracker/README.md"},
-		{"type": "network_defender", "path": "res://scenes/minigames/network_defender/README.md"}
+		{"type": "port_scanner", "path": "res://src/minigames/port_scanner/README.md"},
+		{"type": "sql_injection", "path": "res://src/minigames/sql_injection/README.md"},
+		{"type": "email_phishing", "path": "res://src/minigames/email_phishing/README.md"},
+		{"type": "password_cracker", "path": "res://src/minigames/password_cracker/README.md"},
+		{"type": "network_defender", "path": "res://src/minigames/network_defender/README.md"}
 	]
 	
 	for minigame in minigames:
-		_resources.load_minigame_doc(minigame.type, minigame.path)
+		# Only load if file exists
+		if FileAccess.file_exists(minigame.path):
+			_resources.load_minigame_doc(minigame.type, minigame.path)
 
 ## Main event handler - PUBLIC API
 ## Processes an event and returns generated text
@@ -128,7 +130,9 @@ func handle_event(event: ClippyEvent) -> String:
 	print("[ClippyController] Event is valid, adding to queue")
 	
 	# Add to queue
+	# Add to queue and sort by priority
 	_event_queue.append(event)
+	_sort_queue()
 	
 	# Process if idle
 	if current_state == State.IDLE:
@@ -139,6 +143,15 @@ func handle_event(event: ClippyEvent) -> String:
 
 ## Process next event in queue
 func _process_next_event() -> void:
+	if _event_queue.is_empty():
+		_change_state(State.IDLE)
+		processing_complete.emit()
+		return
+	
+	_change_state(State.LISTENING)
+	# Filter expired events
+	_remove_expired_events()
+	
 	if _event_queue.is_empty():
 		_change_state(State.IDLE)
 		processing_complete.emit()
@@ -226,3 +239,22 @@ func _on_timeout() -> void:
 ## Manually load documentation - PUBLIC API
 func load_project_docs(path: String) -> void:
 	_resources.load_project_docs(path)
+
+## Sort queue by priority (higher priority first)
+func _sort_queue() -> void:
+	_event_queue.sort_custom(func(a, b): return a.priority > b.priority)
+
+## Remove events that have expired
+func _remove_expired_events() -> void:
+	var current_time = Time.get_ticks_msec() / 1000.0
+	var valid_events: Array[ClippyEvent] = []
+	
+	for event in _event_queue:
+		if event.expiration_time > 0.0:
+			var age = current_time - event.timestamp
+			if age > event.expiration_time:
+				print("[ClippyController] Dropping expired event: ", event.get_description())
+				continue
+		valid_events.append(event)
+	
+	_event_queue = valid_events

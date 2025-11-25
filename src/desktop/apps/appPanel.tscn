@@ -1,0 +1,148 @@
+[gd_scene load_steps=10 format=3 uid="uid://bbplcuyivtpgx"]
+
+[ext_resource type="Script" uid="uid://c6nvy17rtttou" path="res://src/desktop/panel/Setup_panel.gd" id="1_fo47w"]
+[ext_resource type="Shader" uid="uid://dwj1gcianwteq" path="res://assets/shaders/blur.gdshader" id="1_uvnin"]
+[ext_resource type="Texture2D" uid="uid://bpb6h2a0b2j4t" path="res://src/desktop/textures/recyclebin.png" id="2_2tacg"]
+[ext_resource type="Script" uid="uid://csn82ipivj1ef" path="res://src/desktop/panel/PanelDragger.gd" id="2_vs6if"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2tacg"]
+shader = ExtResource("1_uvnin")
+shader_parameter/blur_amount = 4.0
+shader_parameter/brightness = 1.2
+shader_parameter/saturation = 1.15
+shader_parameter/tint_color = Color(0.101960786, 0.101960786, 0.14901961, 0.2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vs6if"]
+bg_color = Color(0.14509805, 0.14509805, 0.14509805, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8huyo"]
+shader = ExtResource("1_uvnin")
+shader_parameter/blur_amount = 4.00000019
+shader_parameter/brightness = 1.2
+shader_parameter/saturation = 1.15
+shader_parameter/tint_color = Color(0.95, 0.95, 1, 0.15)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2tacg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b378y"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 0.75)
+draw_center = false
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[node name="appPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("1_fo47w")
+
+[node name="Panel" type="Panel" parent="."]
+material = SubResource("ShaderMaterial_2tacg")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -384.0
+offset_right = 400.0
+offset_bottom = 384.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_vs6if")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+metadata/_edit_lock_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 20
+script = ExtResource("2_vs6if")
+metadata/_edit_lock_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MarginContainer"]
+material = SubResource("ShaderMaterial_8huyo")
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("2_2tacg")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 16
+text = "text"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VSeparator" type="VSeparator" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxFlat_2tacg")
+
+[node name="minimize" type="Button" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
+modulate = Color(0, 0, 4.165457, 0.5686275)
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/focus = SubResource("StyleBoxFlat_b378y")
+
+[node name="maximize" type="Button" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
+modulate = Color(0, 0, 4.165, 1)
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/focus = SubResource("StyleBoxFlat_b378y")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Panel/VBoxContainer/SubViewportContainer"]
+unique_name_in_owner = true
+handle_input_locally = false
+size = Vector2i(800, 720)
+render_target_update_mode = 4
+
+[connection signal="pressed" from="Panel/VBoxContainer/MarginContainer/HBoxContainer/minimize" to="." method="_on_minimize_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/MarginContainer/HBoxContainer/maximize" to="." method="_on_maximize_pressed"]

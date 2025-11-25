@@ -101,6 +101,7 @@ func _show_message(text: String) -> void:
 	
 	# Start auto-dismiss timer
 	if dismiss_timer and auto_dismiss_time > 0:
+		dismiss_timer.stop()
 		dismiss_timer.start(auto_dismiss_time)
 		print("[ClippyUI] Auto-dismiss timer started (", auto_dismiss_time, "s)")
 
