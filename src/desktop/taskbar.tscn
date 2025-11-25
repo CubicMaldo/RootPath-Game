@@ -1,0 +1,82 @@
+[gd_scene load_steps=7 format=3 uid="uid://dimd3muyeif7w"]
+
+[ext_resource type="Shader" uid="uid://dwj1gcianwteq" path="res://assets/shaders/blur.gdshader" id="1_8arxw"]
+[ext_resource type="Shader" uid="uid://g3alu3rvi1hs" path="res://assets/shaders/balatro.gdshader" id="2_mxooy"]
+[ext_resource type="Script" uid="uid://bxt7yys6lsvj2" path="res://src/desktop/TaskbarMenuButton.gd" id="3_3c3ok"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rvpx8"]
+shader = ExtResource("1_8arxw")
+shader_parameter/blur_amount = 4.00000019
+shader_parameter/brightness = 1.00000002375
+shader_parameter/saturation = 1.00000002375
+shader_parameter/tint_color = Color(0.100499995, 0.100499995, 0.15, 0.2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fuoj2"]
+bg_color = Color(0.14406255, 0.14406255, 0.14406249, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gpmcu"]
+shader = ExtResource("2_mxooy")
+shader_parameter/polar_coordinates = false
+shader_parameter/polar_center = Vector2(0.5, 0.5)
+shader_parameter/polar_zoom = 1.0
+shader_parameter/polar_repeat = 1.0
+shader_parameter/spin_rotation = 0.0
+shader_parameter/spin_speed = 1.0
+shader_parameter/offset = Vector2(0, 0)
+shader_parameter/colour_1 = Color(0.871, 0.267, 0.231, 1)
+shader_parameter/colour_2 = Color(0, 0.42, 0.706, 1)
+shader_parameter/colour_3 = Color(0.086, 0.137, 0.145, 1)
+shader_parameter/contrast = 3.5
+shader_parameter/lighting = 0.4
+shader_parameter/spin_amount = 0.25
+shader_parameter/pixel_filter = 740.0
+
+[node name="Taskbar" type="Panel"]
+material = SubResource("ShaderMaterial_rvpx8")
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -956.0
+offset_top = -85.0
+offset_right = 956.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fuoj2")
+
+[node name="MargenBar" type="MarginContainer" parent="."]
+material = SubResource("ShaderMaterial_gpmcu")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+metadata/_edit_lock_ = true
+
+[node name="TaskBar" type="HBoxContainer" parent="MargenBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+metadata/_edit_lock_ = true
+
+[node name="MenuButton" type="Button" parent="MargenBar/TaskBar"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 32
+text = "☰"
+script = ExtResource("3_3c3ok")
+
+[node name="PopupMenu" type="PopupMenu" parent="MargenBar/TaskBar/MenuButton"]

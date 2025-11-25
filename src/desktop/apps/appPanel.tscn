@@ -26,7 +26,13 @@ shader_parameter/brightness = 1.2
 shader_parameter/saturation = 1.15
 shader_parameter/tint_color = Color(0.95, 0.95, 1, 0.15)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2tacg"]
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_np5wk"]
+content_margin_left = 0.0
+content_margin_top = 4.0
+content_margin_right = 0.0
+content_margin_bottom = 4.0
+color = Color(0, 0, 0, 0)
+vertical = true
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b378y"]
 content_margin_left = 4.0
@@ -86,7 +92,7 @@ metadata/_edit_lock_ = true
 [node name="MarginContainer" type="MarginContainer" parent="Panel/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 20
-theme_override_constants/margin_right = 20
+theme_override_constants/margin_right = 30
 script = ExtResource("2_vs6if")
 metadata/_edit_lock_ = true
 
@@ -96,14 +102,16 @@ custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
+[node name="Icon" type="TextureRect" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 texture = ExtResource("2_2tacg")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
+[node name="Text" type="Label" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -114,8 +122,9 @@ vertical_alignment = 1
 
 [node name="VSeparator" type="VSeparator" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/separator = SubResource("StyleBoxFlat_2tacg")
+size_flags_horizontal = 6
+mouse_filter = 1
+theme_override_styles/separator = SubResource("StyleBoxLine_np5wk")
 
 [node name="minimize" type="Button" parent="Panel/VBoxContainer/MarginContainer/HBoxContainer"]
 modulate = Color(0, 0, 4.165457, 0.5686275)

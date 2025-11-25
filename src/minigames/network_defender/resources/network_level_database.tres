@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="NetworkLevelDatabase" load_steps=17 format=3 uid="uid://dowif7wxguhw7"]
 
-[ext_resource type="Script" path="res://src/minigames/network_defender/NetworkLevelDatabase.gd" id="1"]
-[ext_resource type="Script" path="res://src/minigames/network_defender/ConnectionResource.gd" id="2"]
+[ext_resource type="Script" uid="uid://doas5n3ywd82h" path="res://src/minigames/network_defender/NetworkLevelDatabase.gd" id="1"]
+[ext_resource type="Script" uid="uid://cn8r4m2xvc71g" path="res://src/minigames/network_defender/ConnectionResource.gd" id="2"]
 
 [sub_resource type="Resource" id="1"]
 resource_name = "ConexionSegura1"

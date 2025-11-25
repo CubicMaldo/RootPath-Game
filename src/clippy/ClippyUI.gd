@@ -13,7 +13,7 @@
 #   var clippy_ui = preload("res://src/clippy/ClippyUI.tscn").instantiate()
 #   add_child(clippy_ui)
 
-extends CanvasLayer
+extends Control
 
 ## Display duration (seconds) before auto-dismiss. Set to 0 to disable auto-dismiss.
 @export var auto_dismiss_time: float = 8.0
@@ -25,11 +25,9 @@ extends CanvasLayer
 @export var animation_duration: float = 0.3
 
 ## Nodes
-@onready var panel: PanelContainer = %ClippyPanel
 @onready var message_label: RichTextLabel = %MessageLabel
 @onready var character_icon: TextureRect = %CharacterIcon
 @onready var dismiss_button: Button = %DismissButton
-@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 ## Timer for auto-dismiss
 var dismiss_timer: Timer = null
@@ -41,10 +39,9 @@ func _ready() -> void:
 	print("[ClippyUI] Initializing...")
 	
 	# Initially hide panel
-	if panel:
-		panel.modulate.a = 0.0
-		panel.visible = false
-		print("[ClippyUI] Panel hidden initially")
+	self.modulate.a = 0.0
+	self.visible = false
+	print("[ClippyUI] Panel hidden initially")
 	
 	# Setup dismiss button
 	if dismiss_button:
@@ -89,15 +86,14 @@ func _show_message(text: String) -> void:
 	if message_label:
 		message_label.text = text
 	
-	if panel:
-		panel.visible = true
+	self.visible = true
 		
 		# Animate in
-		var tween = create_tween()
-		tween.set_ease(Tween.EASE_OUT)
-		tween.set_trans(Tween.TRANS_CUBIC)
-		tween.tween_property(panel, "modulate:a", 1.0, animation_duration)
-		print("[ClippyUI] Panel animated in")
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(self, "modulate:a", 1.0, animation_duration)
+	print("[ClippyUI] Panel animated in")
 	
 	# Start auto-dismiss timer
 	if dismiss_timer and auto_dismiss_time > 0:
@@ -107,12 +103,12 @@ func _show_message(text: String) -> void:
 
 ## Hide message with animation
 func _hide_message() -> void:
-	if panel:
+	if self:
 		var tween = create_tween()
 		tween.set_ease(Tween.EASE_IN)
 		tween.set_trans(Tween.TRANS_CUBIC)
-		tween.tween_property(panel, "modulate:a", 0.0, animation_duration)
-		tween.tween_callback(func(): panel.visible = false)
+		tween.tween_property(self, "modulate:a", 0.0, animation_duration)
+		tween.tween_callback(func(): self.visible = false)
 	
 	# Acknowledge to Clippy
 	if clippy:
