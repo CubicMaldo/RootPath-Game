@@ -1,11 +1,19 @@
 extends Control
+
 @onready var app_desktop_container: GridContainer = $DesktopMargin/AppContainer
 @onready var taskbar_container: Container = %TaskBar
-@export var apps_panel_scene : PackedScene
+@export var apps_panel_scene: PackedScene
 @onready var game_over_visuals: ColorRect = $CanvasLayer/EndingScreen
+
+var panel_manager: PanelManager
 
 func _ready():
 	add_to_group("desktop_manager")
+	
+	# Initialize PanelManager
+	# Note: We assume %AppPanelContainer exists in the scene tree as it was used in the original script
+	panel_manager = PanelManager.new(%AppPanelContainer, apps_panel_scene)
+	
 	# Conectamos dinámicamente TODOS los iconos del contenedor
 	for icon in app_desktop_container.get_children():
 		if icon.has_signal("open_app"):
@@ -20,85 +28,29 @@ func open_app_from_stats(app_stats: AppStats) -> Dictionary:
 	if app_stats.scene == null:
 		push_warning("AppStats %s no tiene escena asociada." % app_stats.app_name)
 		return {}
-	var session := _spawn_app_session(app_stats.scene, app_stats, null)
+		
+	var session := panel_manager.spawn_app_session(app_stats.scene, app_stats)
 	if session.is_empty():
 		return session
+		
 	if not session.get("is_existing", false):
-		_animate_new_panel(session.get("panel"))
+		panel_manager.animate_panel(session.get("panel"))
+		
 	return session
 
-func _on_icon_opened(app_ref: PackedScene, appStats : AppStats, source_icon: Node):
-	var session := _spawn_app_session(app_ref, appStats, source_icon)
+func _on_icon_opened(app_ref: PackedScene, appStats: AppStats, source_icon: Node):
+	var session := panel_manager.spawn_app_session(app_ref, appStats)
+	
 	if session.is_empty():
 		return
+		
 	if not session.get("is_existing", false):
-		_animate_new_panel(session.get("panel"))
-
-func _spawn_app_session(app_ref: PackedScene, app_stats: AppStats, source_icon: Node) -> Dictionary:
-	
-	if app_ref == null:
-		return {}
-	var app_id := _get_app_id(app_stats, app_ref)
-	var existing_panel := _find_open_app_panel(app_id)
-	if existing_panel:
-		_animate_new_panel(existing_panel)
-		print("App '%s' ya está abierta; reutilizando instancia." % app_stats.app_name)
-		return {
-			"panel": existing_panel,
-			"app": _extract_app_from_panel(existing_panel),
-			"app_id": app_id,
-			"is_existing": true
-		}
-	
-	var app_panel := apps_panel_scene.instantiate()
-	var app_inside := app_ref.instantiate()	
-	
-	app_panel.set_meta("app_id", app_id)
-	app_panel._setAppStat(app_stats)
-	var viewport := app_panel.find_child("SubViewport")
-	if viewport != null:
-		viewport.add_child(app_inside)
-	add_child(app_panel)
-	if source_icon != null:
+		panel_manager.animate_panel(session.get("panel"))
+		
+	# Taskbar logic remains here as it interacts with taskbar_container which is specific to Desktop
+	var app_id = session.get("app_id")
+	if source_icon != null and app_id != null:
 		_ensure_taskbar_icon(app_id, source_icon)
-
-	return {
-		"panel": app_panel,
-		"app": app_inside,
-		"app_id": app_id,
-		"is_existing": false
-	}
-
-func _extract_app_from_panel(panel: Node) -> Node:
-	if panel == null:
-		return null
-	var viewport := panel.find_child("SubViewport")
-	if viewport == null:
-		return null
-	if viewport.get_child_count() == 0:
-		return null
-	return viewport.get_child(0)
-
-func _animate_new_panel(panel: Node) -> void:
-	if panel == null:
-		return
-	panel.visible = true
-	var tween := create_tween()
-	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-	tween.tween_property(panel.panel, "scale", Vector2(1, 1), 0.6).from(Vector2(0,0))
-
-func _get_app_id(appStats: AppStats, app_ref: PackedScene) -> String:
-	if appStats and appStats.app_name != "":
-		return appStats.app_name
-	if app_ref:
-		return app_ref.resource_path
-	return "unknown_app"
-
-func _find_open_app_panel(app_id: String) -> Control:
-	for child in get_children():
-		if child.has_meta("app_id") and child.get_meta("app_id") == app_id:
-			return child
-	return null
 
 func _ensure_taskbar_icon(app_id: String, source_icon: Node) -> void:
 	if not _is_taskbar_ready(source_icon):
@@ -190,8 +142,9 @@ func _configure_taskbar_icon_connections(task_icon: Node) -> void:
 		var task_cb := Callable(self, "_on_icon_opened").bind(task_icon)
 		if task_cb != null and not task_icon.is_connected("open_app", task_cb):
 			task_icon.connect("open_app", task_cb)
+
 var tween_game_over: Tween
-func _on_game_over(_won : bool):
+func _on_game_over(_won: bool):
 	_kill_tween_if_running(tween_game_over)
 	tween_game_over = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 

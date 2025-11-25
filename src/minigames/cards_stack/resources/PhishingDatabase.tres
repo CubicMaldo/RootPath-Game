@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardDatabase" load_steps=17 format=3 uid="uid://devxoe3vgxys7"]
+
+[ext_resource type="Script" uid="uid://qdg33u4dk4hx" path="res://src/minigames/cards_stack/PhishingCard.gd" id="1_5oa1g"]
+[ext_resource type="Resource" uid="uid://c2vx8oam5pqr1" path="res://src/minigames/cards_stack/resources/phishing_banco_urgente.tres" id="2_1d3ww"]
+[ext_resource type="Script" uid="uid://bbohv2r1kvnr4" path="res://src/minigames/cards_stack/CardDatabase.gd" id="2_lx5jo"]
+[ext_resource type="Resource" uid="uid://ov1n2e0yjvf2" path="res://src/minigames/cards_stack/resources/phishing_facebook_alerta.tres" id="3_553k5"]
+[ext_resource type="Resource" uid="uid://ch8uis87hoo4r" path="res://src/minigames/cards_stack/resources/phishing_inversion_cripto.tres" id="4_w1vjm"]
+[ext_resource type="Resource" uid="uid://dbu5hp6ipn06e" path="res://src/minigames/cards_stack/resources/phishing_linkedin_falso.tres" id="5_4gwah"]
+[ext_resource type="Resource" uid="uid://f6sgrh5gem2p" path="res://src/minigames/cards_stack/resources/phishing_paquete_retenido.tres" id="6_7ni4p"]
+[ext_resource type="Resource" uid="uid://cjjlyrdcxj8rp" path="res://src/minigames/cards_stack/resources/phishing_paypal_falso.tres" id="7_sh8rc"]
+[ext_resource type="Resource" uid="uid://bak3fn4gnlx4c" path="res://src/minigames/cards_stack/resources/phishing_premio_falso.tres" id="8_n0r0d"]
+[ext_resource type="Resource" uid="uid://hhjwpbavh7hn" path="res://src/minigames/cards_stack/resources/phishing_soporte_tecnico.tres" id="9_o1mm2"]
+[ext_resource type="Resource" uid="uid://djau8ua8ipp5s" path="res://src/minigames/cards_stack/resources/legitimo_actualizacion_whatsapp.tres" id="10_ubasy"]
+[ext_resource type="Resource" uid="uid://cbl4go5homy5d" path="res://src/minigames/cards_stack/resources/legitimo_confirmacion_compra.tres" id="11_fsy26"]
+[ext_resource type="Resource" uid="uid://bg7thsi6gnn3q" path="res://src/minigames/cards_stack/resources/legitimo_curso_universidad.tres" id="12_a6bcy"]
+[ext_resource type="Resource" uid="uid://dakm0sedyk8sq" path="res://src/minigames/cards_stack/resources/legitimo_envio_dhl.tres" id="13_85epx"]
+[ext_resource type="Resource" uid="uid://d3wyao0n6rst2" path="res://src/minigames/cards_stack/resources/legitimo_newsletter.tres" id="14_rxn4a"]
+[ext_resource type="Resource" uid="uid://biikxqcbwi8io" path="res://src/minigames/cards_stack/resources/legitimo_recordatorio_cita.tres" id="15_j4vku"]
+
+[resource]
+script = ExtResource("2_lx5jo")
+cards = Array[ExtResource("1_5oa1g")]([ExtResource("10_ubasy"), ExtResource("11_fsy26"), ExtResource("12_a6bcy"), ExtResource("13_85epx"), ExtResource("14_rxn4a"), ExtResource("15_j4vku"), ExtResource("2_1d3ww"), ExtResource("3_553k5"), ExtResource("4_w1vjm"), ExtResource("5_4gwah"), ExtResource("6_7ni4p"), ExtResource("7_sh8rc"), ExtResource("8_n0r0d"), ExtResource("9_o1mm2")])
+metadata/_custom_type_script = "uid://bbohv2r1kvnr4"

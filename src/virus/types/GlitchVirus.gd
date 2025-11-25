@@ -13,8 +13,9 @@ var current_time: float = 0.0
 var is_active: bool = false
 
 func _ready():
-	#return
-	start_infection()
+	# No llamar start_infection() aquí
+	# El VirusController lo llamará después de añadir el virus al árbol
+	pass
 
 func start_infection() -> void:
 	is_active = true

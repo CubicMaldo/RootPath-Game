@@ -1,0 +1,60 @@
+[gd_resource type="Resource" script_class="PhishingCard" load_steps=2 format=3 uid="uid://wcjp6hysed34"]
+
+[ext_resource type="Script" uid="uid://qdg33u4dk4hx" path="res://src/minigames/cards_stack/PhishingCard.gd" id="1_4hrsr"]
+
+
+
+[resource]
+script = ExtResource("1_4hrsr")
+card_title = "📱 Verificación de Número (Requerida contraseña)"
+card_color = Color(0.92, 0.28, 0.28, 1)
+app_name = "WhatsApp Verification"
+app_identifier = "info.whatsapp-secure"
+notification_title = "Código de verificación: 847392"
+notification_message = "Hola,
+
+Alguien intentó registrar tu número de teléfono en WhatsApp desde un nuevo dispositivo.
+
+Si NO fuiste tú:
+
+Tu cuenta puede estar en RIESGO.
+
+Para PROTEGER tu cuenta:
+1. Haz clic en el enlace de seguridad
+2. Ingresa tu número de teléfono
+3. Confirma el código: 847392
+4. Cambia tu PIN de seguridad
+
+>>> PROTEGER MI CUENTA <<<
+
+IMPORTANTE:
+Si no proteges tu cuenta en las próximas 2 HORAS, perderás acceso a:
+• Todos tus chats
+• Tu historial de mensajes
+• Tus grupos
+• Tus contactos
+
+Este código expira en 2 horas.
+
+WhatsApp Security Team
+
+¿Fuiste tú? Ignora este mensaje.
+
+© WhatsApp 2025"
+has_action_buttons = false
+is_phishing = true
+difficulty = 3
+points_correct = 125
+points_incorrect = -60
+phishing_indicators = ["Identificador falso: info.whatsapp-secure (oficial es com.whatsapp)", "WhatsApp NO envía códigos por notificación, solo por SMS", "Solicita ingresar el código en un enlace (robo de cuenta)", "Amenaza con perder chats en 2 horas", "WhatsApp no pide 'proteger cuenta' por notificación", "Intenta que ingreses el código de verificación"]
+explanation = "¡PHISHING PELIGROSO de WhatsApp! ALERTA MÁXIMA:
+- WhatsApp SOLO envía códigos por SMS, NUNCA por notificación de app falsa
+- Si ingresas el código en el enlace, roban tu cuenta
+- El identificador info.whatsapp-secure es completamente falso
+- WhatsApp no amenaza con perder chats
+- NUNCA compartas códigos de verificación con nadie
+
+Si recibes un código que no solicitaste: IGNÓRALO y no lo compartas
+Contacto oficial: www.whatsapp.com/contact"
+card_id = "phishing_012"
+category = "messaging_scam"

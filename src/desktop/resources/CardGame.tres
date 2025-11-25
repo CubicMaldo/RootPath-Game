@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="AppStats" load_steps=4 format=3 uid="uid://da4a2imuy21fd"]
 
 [ext_resource type="Texture2D" uid="uid://cx1jr5jd3uajj" path="res://src/desktop/textures/icons8-contact-96.png" id="1_xg6uk"]
-[ext_resource type="PackedScene" uid="uid://d0mx4seqmfq4d" path="res://src/desktop/apps/cards_stack/cards_stack.tscn" id="2_k8k36"]
+[ext_resource type="PackedScene" uid="uid://d0mx4seqmfq4d" path="res://src/minigames/cards_stack/cards_stack.tscn" id="2_k8k36"]
 [ext_resource type="Script" uid="uid://idvitonl6kt2" path="res://src/desktop/AppStats.gd" id="3_l1xq4"]
 
 [resource]

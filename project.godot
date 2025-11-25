@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 
 Global="*res://src/autoloads/Global.gd"
 EventBus="*res://src/autoloads/EventBus.gd"
+SettingsManager="*res://src/autoloads/SettingsManager.gd"
 SignalLens="*res://addons/signal_lens/autoload/signal_lens_autoload.gd"
 Clippy="*res://src/clippy/ClippyController.gd"
 ClippyBridge="*res://src/clippy/ClippyEventBridge.gd"

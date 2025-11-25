@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="PhishingCard" load_steps=2 format=3 uid="uid://cqx3p4gbqlxh4"]
+
+[ext_resource type="Script" uid="uid://qdg33u4dk4hx" path="res://src/minigames/cards_stack/PhishingCard.gd" id="1_4hrsr"]
+
+
+[resource]
+script = ExtResource("1_4hrsr")
+card_title = "🎫 Confirmación de Boletos"
+card_color = Color(0.35, 0.7, 0.5, 1)
+app_name = "Cinépolis"
+app_identifier = "com.cinepolis.mx"
+notification_title = "Tu compra - Película: Dune 3 - Sala 7"
+notification_message = "Gracias por tu compra en Cinépolis.
+
+DETALLES DE TU COMPRA:
+Película: Dune: Parte Tres
+Cine: Cinépolis Platino - Plaza Antara
+Sala: 7 (VIP)
+Fecha: Sábado 22 de Marzo, 2025
+Hora: 7:30 PM
+Asientos: F5, F6
+
+Cantidad: 2 boletos
+Total pagado: $520.00 MXN
+
+Código QR: [Disponible en la notificación]
+
+IMPORTANTE:
+• Llega 15 minutos antes
+• Presenta este código QR en taquilla
+• También puedes mostrarlo desde tu app Cinépolis
+
+¿Necesitas factura? Solicítala aquí:
+www.cinepolis.com.mx/facturacion
+
+¡Disfruta tu película!
+Cinépolis"
+has_action_buttons = true
+action_button_labels = ["Ver boletos", "Descargar QR"]
+is_phishing = false
+difficulty = 1
+points_correct = 75
+points_incorrect = -35
+explanation = "Notificación LEGÍTIMA de confirmación de boletos:
+- Identificador oficial de Cinépolis verificado
+- Información específica y verificable (sala, horario, asientos)
+- Incluye detalles de la compra ya pagada
+- No solicita pagos adicionales
+- URL oficial para facturación
+- Botones de acción legítimos (ver/descargar boletos)"
+card_id = "legit_008"
+category = "entertainment"

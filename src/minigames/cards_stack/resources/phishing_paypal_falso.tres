@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="PhishingCard" load_steps=2 format=3 uid="uid://cjjlyrdcxj8rp"]
+
+[ext_resource type="Script" uid="uid://qdg33u4dk4hx" path="res://src/minigames/cards_stack/PhishingCard.gd" id="1_4hrsr"]
+
+[resource]
+script = ExtResource("1_4hrsr")
+card_color = Color(0.95, 0.25, 0.25, 1)
+card_title = "⚠️ Cuenta Limitada"
+notification_title = "Acción requerida: Su cuenta ha sido limitada"
+app_name = "PayPal Service"
+app_identifier = "com.paypa1-secure"
+notification_message = "Estimado cliente,
+
+Su cuenta de PayPal ha sido LIMITADA debido a actividad inusual.
+
+Para restaurar el acceso completo, debe:
+
+1. Verificar su identidad
+2. Actualizar información de pago
+3. Confirmar transacciones recientes
+
+>>> Restaurar Cuenta Ahora <<<
+
+Tiene 48 horas para completar la verificación o su cuenta será CERRADA PERMANENTEMENTE.
+
+Caso: PP-2025-847593
+
+PayPal Security Team
+
+Este es un mensaje automatico, no responda a esta notificación."
+is_phishing = true
+difficulty = 2
+phishing_indicators = Array[String](["Identificador falso: com.paypa1-secure usa '1' en lugar de 'l'", "PayPal no limita cuentas sin previo aviso", "Amenaza con cierre permanente", "Errores de ortografía ('correo' sin acento)", "Urgencia de 48 horas"])
+explanation = "¡PHISHING CLÁSICO de PayPal! Señales de alerta:
+- Identificador falso muy sutil (paypa1 con número uno)
+- PayPal NO limita cuentas por notificación sin explicación
+- Usa amenazas y urgencia artificial
+- Errores gramaticales sutiles
+- Enlaces genéricos sin personalización
+
+SIEMPRE accede a PayPal escribiendo la URL directamente en el navegador"
+card_id = "phishing_005"
+category = "financial"

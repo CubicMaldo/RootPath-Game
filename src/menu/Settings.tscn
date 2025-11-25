@@ -1,0 +1,153 @@
+[gd_scene load_steps=4 format=3 uid="uid://bwq5x8y7kl3mn"]
+
+[ext_resource type="Script" path="res://src/menu/Settings.gd" id="1_settings"]
+[ext_resource type="Shader" uid="uid://g3alu3rvi1hs" path="res://assets/shaders/balatro.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
+shader = ExtResource("2_shader")
+shader_parameter/polar_coordinates = false
+shader_parameter/polar_center = Vector2(0.5, 0.5)
+shader_parameter/polar_zoom = 1.0
+shader_parameter/polar_repeat = 1.0
+shader_parameter/spin_rotation = 0.0
+shader_parameter/spin_speed = 8.0
+shader_parameter/offset = Vector2(0, 0)
+shader_parameter/colour_1 = Color(1, 1, 1, 1)
+shader_parameter/colour_2 = Color(1, 1, 1, 1)
+shader_parameter/colour_3 = Color(0.62, 0.62, 0.62, 1)
+shader_parameter/contrast = 2.0
+shader_parameter/lighting = 0.4
+shader_parameter/spin_amount = 0.36
+shader_parameter/pixel_filter = 700.0
+
+[node name="Settings" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_settings")
+
+[node name="Background" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_bg")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.15, 0.15, 0.2, 1)
+
+[node name="LeftPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 400.0
+grow_vertical = 2
+
+[node name="SettingsContainer" type="VBoxContainer" parent="LeftPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -250.0
+offset_right = 180.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="TitleLabel" type="Label" parent="LeftPanel/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "⚙️ Ajustes"
+horizontal_alignment = 1
+
+[node name="Separator1" type="HSeparator" parent="LeftPanel/SettingsContainer"]
+layout_mode = 2
+
+[node name="AudioLabel" type="Label" parent="LeftPanel/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "🔊 Audio"
+
+[node name="MasterLabel" type="Label" parent="LeftPanel/SettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Master: 100%"
+
+[node name="MasterSlider" type="HSlider" parent="LeftPanel/SettingsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+max_value = 100.0
+step = 1.0
+value = 100.0
+tick_count = 11
+
+[node name="MusicLabel" type="Label" parent="LeftPanel/SettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Música: 80%"
+
+[node name="MusicSlider" type="HSlider" parent="LeftPanel/SettingsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+max_value = 100.0
+step = 1.0
+value = 80.0
+tick_count = 11
+
+[node name="SfxLabel" type="Label" parent="LeftPanel/SettingsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Efectos: 100%"
+
+[node name="SfxSlider" type="HSlider" parent="LeftPanel/SettingsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+max_value = 100.0
+step = 1.0
+value = 100.0
+tick_count = 11
+
+[node name="Separator2" type="HSeparator" parent="LeftPanel/SettingsContainer"]
+layout_mode = 2
+
+[node name="VideoLabel" type="Label" parent="LeftPanel/SettingsContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "🖥️ Pantalla"
+
+[node name="FullscreenContainer" type="HBoxContainer" parent="LeftPanel/SettingsContainer"]
+layout_mode = 2
+
+[node name="FullscreenLabel" type="Label" parent="LeftPanel/SettingsContainer/FullscreenContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Pantalla Completa"
+vertical_alignment = 1
+
+[node name="FullscreenCheck" type="CheckButton" parent="LeftPanel/SettingsContainer/FullscreenContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Separator3" type="HSeparator" parent="LeftPanel/SettingsContainer"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="LeftPanel/SettingsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "← Volver"

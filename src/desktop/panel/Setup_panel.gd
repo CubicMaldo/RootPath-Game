@@ -24,11 +24,10 @@ func _ready() -> void:
 func _on_minimize_pressed() -> void:
 	
 	var tween = create_tween()
-	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-	tween.tween_property(panel, "scale", Vector2(0.1, 0.1), 0.4)
+	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(panel, "scale", Vector2(0.01, 0.01), 0.4)
 	
 	tween.finished.connect(func(): self.visible = false)
-
 
 func _on_maximize_pressed() -> void:
 	if panel == null:

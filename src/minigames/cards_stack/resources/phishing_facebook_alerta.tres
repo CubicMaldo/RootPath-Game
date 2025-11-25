@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="PhishingCard" load_steps=2 format=3 uid="uid://ov1n2e0yjvf2"]
+
+[ext_resource type="Script" uid="uid://qdg33u4dk4hx" path="res://src/minigames/cards_stack/PhishingCard.gd" id="1_4hrsr"]
+
+[resource]
+script = ExtResource("1_4hrsr")
+card_color = Color(0.9, 0.22, 0.22, 1)
+card_title = "👤 Intento de Inicio de Sesión"
+notification_title = "Alguien intentó acceder a tu cuenta desde un dispositivo desconocido"
+app_name = "Facebook Security Alert <security-alert@facebook.link>"
+app_identifier = "com.facebok-security"
+notification_message = "Hola,
+
+Detectamos un intento de inicio de sesión en tu cuenta de Facebook desde:
+
+Ubicación: Lagos, Nigeria
+Dispositivo: Windows PC
+Navegador: Chrome
+Hora: Hace 15 minutos
+
+¿Fuiste tú?
+
+SI FUI YO - Ignorar este mensaje
+
+NO FUI YO - Protege tu cuenta AHORA >>>
+
+Si no fuiste tú, tu cuenta puede estar en RIESGO.
+Haz clic en el enlace para:
+1. Cambiar tu contraseña
+2. Verificar dispositivos conectados
+3. Activar autenticación de dos factores
+
+IMPORTANTE: Debes actuar en los próximos 60 minutos o tu cuenta será BLOQUEADA temporalmente.
+
+Equipo de Seguridad de Facebook
+
+© Facebook 2025. Todos los derechos reservados."
+is_phishing = true
+difficulty = 3
+points_correct = 125
+points_incorrect = -60
+phishing_indicators = Array[String](["Error de ortografía en identificador: 'facebok' en lugar de 'facebook'", "Ubicación sospechosa (Nigeria) para generar alarma", "Urgencia de 60 minutos", "Facebook usa com.facebook.katana no facebok-security", "Solicita cambiar contraseña por enlace en notificación"])
+explanation = "¡PHISHING MUY SOFISTICADO! Análisis:
+- Error sutil en el identificador (facebok vs facebook)
+- Usa ingeniería social: miedo a intrusión
+- La ubicación 'Nigeria' es intencional para alarmar
+- Facebook NUNCA bloquea cuentas con aviso de 60 minutos
+- Los cambios de contraseña deben hacerse directamente en facebook.com
+
+Siempre verifica el identificador cuidadosamente, los errores sutiles son comunes"
+card_id = "phishing_008"
+category = "social_media"

@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="PhishingCard" load_steps=2 format=3 uid="uid://c2vx8oam5pqr1"]
+
+[ext_resource type="Script" uid="uid://qdg33u4dk4hx" path="res://src/minigames/cards_stack/PhishingCard.gd" id="1_4hrsr"]
+
+[resource]
+script = ExtResource("1_4hrsr")
+card_color = Color(0.9, 0.2, 0.2, 1)
+card_title = "⚠️ ALERTA DE SEGURIDAD"
+notification_title = "URGENTE: Verifique su cuenta en 24 horas | Evite bloqueo enviando sus datos"
+app_name = "Banco Seguro"
+app_identifier = "com.banc0segur0"
+notification_message = "Estimado cliente,
+
+Hemos detectado actividad SOSPECHOSA en su cuenta.
+
+Por su seguridad, debe verificar su identidad INMEDIATAMENTE haciendo clic en el siguiente enlace:
+
+>>> VERIFICAR CUENTA AHORA <<<
+
+Si no completa esta verificación en las próximas 24 HORAS, su cuenta será BLOQUEADA permanentemente.
+
+Atentamente,
+Departamento de Seguridad
+Banco Seguro"
+is_phishing = true
+difficulty = 2
+phishing_indicators = Array[String](["Identificador falso: usa '0' en lugar de 'o' (banc0segur0)", "Urgencia artificial con amenaza de bloqueo", "Solicita acción inmediata sin contacto alternativo", "Errores de capitalización excesiva"])
+explanation = "¡PHISHING! Esta notificación usa tácticas de ingeniería social:
+- Identificador falso (banc0segur0 con ceros)
+- Crea urgencia artificial amenazando con bloqueo
+- Los bancos NUNCA solicitan verificación urgente por notificación
+- Uso excesivo de mayúsculas para generar pánico"
+card_id = "phishing_001"
+category = "banking"

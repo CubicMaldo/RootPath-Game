@@ -1,5 +1,4 @@
 [gd_scene load_steps=22 format=3 uid="uid://chrommxyoxqu4"]
-[gd_scene load_steps=22 format=3 uid="uid://chrommxyoxqu4"]
 
 [ext_resource type="Script" uid="uid://dxntma2y6cg4w" path="res://src/desktop/Desktop.gd" id="1_06q4v"]
 [ext_resource type="Shader" uid="uid://g3alu3rvi1hs" path="res://assets/shaders/balatro.gdshader" id="1_13veq"]
@@ -194,10 +193,31 @@ appStats = ExtResource("7_netdef")
 layout_mode = 2
 appStats = ExtResource("8_pwstr")
 
-[node name="Control" type="Control" parent="."]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="AppPanelContainer" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ClippyUI" parent="." instance=ExtResource("15_lswqd")]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -616.0
+offset_top = -256.0
+offset_right = -16.0
+offset_bottom = -96.0
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="Taskbar" type="Panel" parent="."]
 material = SubResource("ShaderMaterial_rvpx8")
@@ -246,20 +266,6 @@ text = "☰"
 script = ExtResource("9_77w8n")
 
 [node name="PopupMenu" type="PopupMenu" parent="Taskbar/MargenBar/TaskBar/MenuButton"]
-
-[node name="ClippyUI" parent="." instance=ExtResource("15_lswqd")]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -616.0
-offset_top = -256.0
-offset_right = -16.0
-offset_bottom = -96.0
-grow_horizontal = 0
-grow_vertical = 0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -343,8 +349,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_lswqd")
 text = "MENU PRINCIPAL"
 icon_alignment = 1
 script = ExtResource("16_t8w61")
-
-[node name="ClippyUI" parent="." instance=ExtResource("15_lswqd")]
 
 [connection signal="pressed" from="CanvasLayer/EndingScreen/Control2/Juego" to="CanvasLayer/EndingScreen/Control2/Juego" method="_on_pressed"]
 [connection signal="pressed" from="CanvasLayer/EndingScreen/Control2/Menu" to="CanvasLayer/EndingScreen/Control2/Menu" method="_on_pressed"]

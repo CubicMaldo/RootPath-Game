@@ -1,22 +1,31 @@
-shader_parameter/scanlines_opacity = 0.30000001425
+[gd_scene load_steps=5 format=3 uid="uid://cj578dcva6jr3"]
+
+[ext_resource type="Script" path="res://src/menu/Parallax.gd" id="1_twihe"]
+[ext_resource type="Shader" uid="uid://yq5a4bhdrkm4" path="res://assets/shaders/vhs.gdshader" id="2_rmhyq"]
+[ext_resource type="PackedScene" uid="uid://chrommxyoxqu4" path="res://src/desktop/Desktop.tscn" id="3_3pawr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pfpuo"]
+shader = ExtResource("2_rmhyq")
+shader_parameter/overlay = true
+shader_parameter/scanlines_opacity = 0.1230000058425
 shader_parameter/scanlines_width = 0.25
-shader_parameter/grille_opacity = 0.050000002375
-shader_parameter/resolution = Vector2(920, 720)
-shader_parameter/pixelate = false
-shader_parameter/roll = false
-shader_parameter/roll_speed = 8.0
-shader_parameter/roll_size = 0.0
-shader_parameter/roll_variation = 1.8
-shader_parameter/distort_intensity = 0.05
-shader_parameter/noise_opacity = 0.4
-shader_parameter/noise_speed = 1.0
-shader_parameter/static_noise_intensity = 0.02000000095
-shader_parameter/aberration = -0.009999952975
-shader_parameter/brightness = 1.2
+shader_parameter/grille_opacity = 0.05200000247
+shader_parameter/resolution = Vector2(1080, 720)
+shader_parameter/pixelate = true
+shader_parameter/roll = true
+shader_parameter/roll_speed = 1.115
+shader_parameter/roll_size = 7.0790003362525
+shader_parameter/roll_variation = 4.92500023067762
+shader_parameter/distort_intensity = 0.0010000000475
+shader_parameter/noise_opacity = 0.0670000031825
+shader_parameter/noise_speed = 5.0
+shader_parameter/static_noise_intensity = 0.0
+shader_parameter/aberration = 0.010000047974999982
+shader_parameter/brightness = 1.4
 shader_parameter/discolor = false
-shader_parameter/warp_amount = 0.0800000038
+shader_parameter/warp_amount = 0.0
 shader_parameter/clip_warp = false
-shader_parameter/vignette_intensity = 0.6
+shader_parameter/vignette_intensity = 0.4
 shader_parameter/vignette_opacity = 0.5
 
 [node name="GameScene" type="Control" node_paths=PackedStringArray("parallax")]
