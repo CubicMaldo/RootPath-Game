@@ -61,11 +61,7 @@ func animate_panel(panel: Node) -> void:
 	panel.visible = true
 	var tween := panel.create_tween()
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-	if "panel" in panel:
-		tween.tween_property(panel.panel, "scale", Vector2(1, 1), 0.6).from(Vector2(0, 0))
-	else:
-		# Fallback if the panel structure is different than expected
-		tween.tween_property(panel, "scale", Vector2(1, 1), 0.6).from(Vector2(0, 0))
+	tween.tween_property(panel, "scale", Vector2(1, 1), 0.6).from(Vector2(0, 0))
 
 func _get_app_id(appStats: AppStats, app_ref: PackedScene) -> String:
 	if appStats and appStats.app_name != "":

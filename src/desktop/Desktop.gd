@@ -21,6 +21,45 @@ func _ready():
 			if icon_cb != null:
 				icon.connect("open_app", icon_cb)
 	EventBus.game_over.connect(_on_game_over)
+	
+	# Create simple System Monitor UI
+	_create_system_monitor_ui()
+
+func _create_system_monitor_ui() -> void:
+	var monitor_panel = PanelContainer.new()
+	monitor_panel.name = "SystemMonitorUI"
+	monitor_panel.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	monitor_panel.position = Vector2(-220, 20) # Offset from top right
+	monitor_panel.custom_minimum_size = Vector2(200, 80)
+	
+	var vbox = VBoxContainer.new()
+	monitor_panel.add_child(vbox)
+	
+	var cpu_label = Label.new()
+	cpu_label.name = "CPULabel"
+	cpu_label.text = "CPU: 0%"
+	vbox.add_child(cpu_label)
+	
+	var ram_label = Label.new()
+	ram_label.name = "RAMLabel"
+	ram_label.text = "RAM: 0%"
+	vbox.add_child(ram_label)
+	
+	add_child(monitor_panel)
+	
+	# Connect update
+	if has_node("/root/SystemMonitor"):
+		get_node("/root/SystemMonitor").usage_updated.connect(func(cpu, ram):
+			cpu_label.text = "CPU: %.1f%%" % cpu
+			ram_label.text = "RAM: %.1f%%" % ram
+			
+			# Color warning
+			if cpu > 90: cpu_label.modulate = Color.RED
+			else: cpu_label.modulate = Color.WHITE
+			
+			if ram > 90: ram_label.modulate = Color.RED
+			else: ram_label.modulate = Color.WHITE
+		)
 
 func open_app_from_stats(app_stats: AppStats) -> Dictionary:
 	if app_stats == null:
@@ -35,6 +74,15 @@ func open_app_from_stats(app_stats: AppStats) -> Dictionary:
 		
 	if not session.get("is_existing", false):
 		panel_manager.animate_panel(session.get("panel"))
+		if has_node("/root/SystemMonitor"):
+			get_node("/root/SystemMonitor").register_app_opened()
+			# Connect close signal to monitor
+			var panel = session.get("panel")
+			if panel.has_signal("tree_exiting"):
+				panel.tree_exiting.connect(func():
+					if has_node("/root/SystemMonitor"):
+						get_node("/root/SystemMonitor").register_app_closed()
+				)
 		
 	return session
 
@@ -46,6 +94,15 @@ func _on_icon_opened(app_ref: PackedScene, appStats: AppStats, source_icon: Node
 		
 	if not session.get("is_existing", false):
 		panel_manager.animate_panel(session.get("panel"))
+		if has_node("/root/SystemMonitor"):
+			get_node("/root/SystemMonitor").register_app_opened()
+			# Connect close signal to monitor
+			var panel = session.get("panel")
+			if panel.has_signal("tree_exiting"):
+				panel.tree_exiting.connect(func():
+					if has_node("/root/SystemMonitor"):
+						get_node("/root/SystemMonitor").register_app_closed()
+				)
 		
 	# Taskbar logic remains here as it interacts with taskbar_container which is specific to Desktop
 	var app_id = session.get("app_id")

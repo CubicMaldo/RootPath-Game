@@ -18,6 +18,9 @@ extends Node
 ## Reference to ClippyController (set in _ready)
 var clippy: ClippyController = null
 
+## Track which minigames have been opened (to avoid repeat messages)
+var opened_minigames: Dictionary = {} # {"game_type": true}
+
 func _ready() -> void:
 	print("[ClippyBridge] Initializing...")
 	
@@ -108,7 +111,7 @@ func _on_node_discovered(node: TreeNode) -> void:
 		"node_type": meta.type,
 		"discovered": true
 	}
-	event.priority = ClippyEvent.Priority.NORMAL
+	event.priority = ClippyEvent.Priority.LOW # Changed from NORMAL
 	event.expiration_time = 10.0
 	_send_clippy_event(event)
 
@@ -118,10 +121,16 @@ func _on_navigation_ready() -> void:
 	event.event_type = ClippyEvent.EventType.TUTORIAL_START
 	event.context_id = "tree_navigation_intro"
 	event.payload = {"section": "navigation"}
-	event.priority = ClippyEvent.Priority.NORMAL
+	event.priority = ClippyEvent.Priority.LOW # Changed from NORMAL
 	_send_clippy_event(event)
 
 func _on_navigation_blocked(reason: String) -> void:
+	# Skip if this is a virus-related block - virus system sends its own Clippy messages
+	var reason_lower = reason.to_lower()
+	if "virus" in reason_lower or "infectado" in reason_lower or "infected" in reason_lower:
+		print("[ClippyBridge] Ignoring navigation_blocked for virus (virus system handles Clippy messages)")
+		return
+	
 	# Player error - navigation blocked
 	var event = ClippyEvent.new()
 	event.event_type = ClippyEvent.EventType.PLAYER_ERROR
@@ -129,7 +138,7 @@ func _on_navigation_blocked(reason: String) -> void:
 		"error_code": "navigation_blocked",
 		"reason": reason
 	}
-	event.priority = ClippyEvent.Priority.CRITICAL
+	event.priority = ClippyEvent.Priority.LOW # Changed from CRITICAL (non-virus blocks)
 	_send_clippy_event(event)
 
 # ============================================================================
@@ -170,8 +179,15 @@ func _on_challenge_started(node: TreeNode) -> void:
 		"game_type": game_type,
 		"node_id": node_id
 	}
-	event.priority = ClippyEvent.Priority.HIGH
-	_send_clippy_event(event)
+	event.priority = ClippyEvent.Priority.LOW # Changed from HIGH
+	
+	# Only send if this minigame hasn't been opened before
+	if not opened_minigames.has(game_type):
+		opened_minigames[game_type] = true
+		print("[ClippyBridge] First time opening %s, sending Clippy message" % game_type)
+		_send_clippy_event(event)
+	else:
+		print("[ClippyBridge] %s already opened before, skipping Clippy message" % game_type)
 
 func _on_challenge_completed(node: TreeNode, win: bool) -> void:
 	if win:
@@ -187,7 +203,7 @@ func _on_challenge_completed(node: TreeNode, win: bool) -> void:
 			"node_id": node_id,
 			"success": true
 		}
-		event.priority = ClippyEvent.Priority.HIGH
+		event.priority = ClippyEvent.Priority.LOW # Changed from HIGH
 		_send_clippy_event(event)
 	else:
 		# Player error
@@ -201,7 +217,7 @@ func _on_challenge_completed(node: TreeNode, win: bool) -> void:
 			"error_code": "challenge_failed",
 			"node_id": node_id
 		}
-		event.priority = ClippyEvent.Priority.CRITICAL
+		event.priority = ClippyEvent.Priority.LOW # Changed from CRITICAL
 		_send_clippy_event(event)
 
 func _on_challenge_state_changed(_old_state: int, _new_state: int) -> void:
@@ -218,7 +234,7 @@ func _on_game_over(win: bool) -> void:
 		var event = ClippyEvent.new()
 		event.event_type = ClippyEvent.EventType.GAME_COMPLETED
 		event.payload = {"victory": true}
-		event.priority = ClippyEvent.Priority.HIGH
+		event.priority = ClippyEvent.Priority.LOW # Changed from HIGH
 		_send_clippy_event(event)
 	else:
 		# Game over - show encouragement
@@ -228,7 +244,7 @@ func _on_game_over(win: bool) -> void:
 			"error_code": "game_over",
 			"can_retry": true
 		}
-		event.priority = ClippyEvent.Priority.CRITICAL
+		event.priority = ClippyEvent.Priority.LOW # Changed from CRITICAL
 		_send_clippy_event(event)
 
 func _on_score_changed(old_score: int, new_score: int, reason: String) -> void:
@@ -259,7 +275,7 @@ func _on_resources_loaded(success: bool) -> void:
 		event.event_type = ClippyEvent.EventType.TUTORIAL_START
 		event.context_id = "game_start"
 		event.payload = {"section": "welcome"}
-		event.priority = ClippyEvent.Priority.NORMAL
+		event.priority = ClippyEvent.Priority.LOW # Changed from NORMAL
 		_send_clippy_event(event)
 
 func _describe_node(node: TreeNode) -> Dictionary:

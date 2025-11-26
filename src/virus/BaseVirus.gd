@@ -22,3 +22,6 @@ func _on_virus_cleared() -> void:
 func _on_virus_failed() -> void:
 	virus_failed.emit()
 	# Dependiendo del diseño, podría reiniciar o penalizar más
+
+func hide_buttons() -> void:
+	pass

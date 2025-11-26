@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://survey_virus"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://src/virus/app_viruses/SurveyVirus.gd" id="1_virus"]
+[ext_resource type="Script" uid="uid://dtlx4ueobv1ta" path="res://src/virus/types/app_viruses/SurveyVirus.gd" id="1_virus"]
+
 
 [node name="SurveyVirus" type="Control"]
 layout_mode = 3

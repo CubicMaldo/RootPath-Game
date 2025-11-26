@@ -8,11 +8,11 @@ signal duplicate_requested
 @onready var timer = $Timer
 @onready var close_button = $VBoxContainer/Header/CloseButton
 
-var lifetime: float = 3.0
+var lifetime: float = 1.0 # Increased from 3.0 for slower spawning
 
 func _ready():
 	close_button.pressed.connect(_on_close_pressed)
-	timer.wait_time = lifetime + randf_range(-0.5, 1.0)
+	timer.wait_time = lifetime + randf_range(0.5, 2.0) # Increased range for more variation
 	timer.timeout.connect(_on_timeout)
 	timer.start()
 	

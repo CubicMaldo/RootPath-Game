@@ -5,41 +5,33 @@ extends Node
 
 # Constantes
 const OVERLAY_SCENE_PATH = "res://src/virus/VirusOverlay.tscn"
-# AppVirusSpawner es una clase global, no necesitamos preload
 
 # Catálogo de virus fullscreen
 var virus_types = {
 	"glitch": preload("res://src/virus/types/GlitchVirus.tscn") if ResourceLoader.exists("res://src/virus/types/GlitchVirus.tscn") else null,
 	"adware": preload("res://src/virus/types/AdwareVirus.tscn") if ResourceLoader.exists("res://src/virus/types/AdwareVirus.tscn") else null,
-	"phishing": preload("res://src/virus/types/PhishingVirus.tscn") if ResourceLoader.exists("res://src/virus/types/PhishingVirus.tscn") else null
+	"phishing": preload("res://src/virus/types/PhishingVirus.tscn") if ResourceLoader.exists("res://src/virus/types/PhishingVirus.tscn") else null,
+	"popup": preload("res://src/virus/types/PopupVirus.tscn")
 }
 
-# Catálogo de virus basados en apps (paneles de escritorio)
+# Catálogo de virus basados en apps (usando AppStats resources)
 var app_virus_types = {
-	"fake_update": {
-		"scene": preload("res://src/virus/app_viruses/FakeUpdateVirus.tscn") if ResourceLoader.exists("res://src/virus/app_viruses/FakeUpdateVirus.tscn") else null,
-		"app_name": "⚠️ Windows Update",
-		"icon": null
-	},
-	"captcha": {
-		"scene": preload("res://src/virus/app_viruses/CaptchaVirus.tscn") if ResourceLoader.exists("res://src/virus/app_viruses/CaptchaVirus.tscn") else null,
-		"app_name": "🤖 Verificación de Seguridad",
-		"icon": null
-	},
-	"survey": {
-		"scene": preload("res://src/virus/app_viruses/SurveyVirus.tscn") if ResourceLoader.exists("res://src/virus/app_viruses/SurveyVirus.tscn") else null,
-		"app_name": "📋 Encuesta Premium",
-		"icon": null
-	}
+	"fake_update": preload("res://src/desktop/resources/FakeUpdateVirus.tres"),
+	"captcha": preload("res://src/desktop/resources/CaptchaVirus.tres"),
+	"survey": preload("res://src/desktop/resources/SurveyVirus.tres")
 }
 
 # Preferencia de tipo de virus (40% app, 60% fullscreen)
 var use_app_virus_chance: float = 0.4
 
+# Sistema de penalización por fallos
+var failed_virus_count: int = 0
+var max_failed_viruses: int = 3 # Game over al tercer fallo
+
 # Variables de estado
 var overlay_instance: VirusOverlay
-var app_virus_spawner: AppVirusSpawner
 var desktop_manager: Node
+var clippy: ClippyController = null # Reference to Clippy assistant
 var is_infected: bool = false
 var current_virus_type: String = "" # "fullscreen" o "app"
 
@@ -48,12 +40,21 @@ func _ready() -> void:
 	EventBus.challenge_completed.connect(_on_challenge_completed)
 	# Preparar overlay (oculto)
 	_setup_overlay()
-	# Instanciar spawner de virus app
-	app_virus_spawner = AppVirusSpawner.new()
-	add_child(app_virus_spawner)
+	
+	# Conectar SystemMonitor
+	if has_node("/root/SystemMonitor"):
+		get_node("/root/SystemMonitor").system_overload.connect(_on_system_overload)
+	
+	# Get Clippy reference
+	if has_node("/root/Clippy"):
+		clippy = get_node("/root/Clippy")
+		print("✅ Clippy conectado al VirusController")
+	else:
+		push_warning("VirusController: Clippy autoload no encontrado")
+	
 	# Esperar a que el Desktop esté listo y configurarlo
 	await get_tree().create_timer(0.5).timeout
-	_setup_app_spawner()
+	_setup_desktop_connection()
 
 # ---------------------------------------------------------------------------
 # Overlay (fullscreen) handling
@@ -88,29 +89,42 @@ func trigger_infection(type: String = "") -> void:
 		virus.virus_cleared.connect(_on_virus_cleared)
 		virus.virus_failed.connect(_on_virus_failed)
 		virus.start_infection()
+		_on_virus_started_monitor() # Monitor update
 		EventBus.navigation_blocked.emit("SISTEMA INFECTADO - LIMPIEZA REQUERIDA")
+		
+		# Send Clippy help for fullscreen virus
+		_send_clippy_virus_help("Virus", type)
 
 func _on_virus_cleared() -> void:
 	print("✅ SISTEMA LIMPIO")
 	is_infected = false
 	current_virus_type = ""
+	_on_virus_ended_monitor() # Monitor update
 	overlay_instance.hide_overlay()
 	EventBus.navigation_ready.emit()
 
 func _on_virus_failed() -> void:
-	print("❌ FALLO EN LIMPIEZA - REINICIANDO VIRUS")
-	# Aquí podrías aplicar penalizaciones o reiniciar el virus. Por ahora, dejamos el estado infectado.
-
+	print("❌ FALLO EN LIMPIEZA")
+	failed_virus_count += 1
+	print("⚠️ Fallos acumulados: %d/%d" % [failed_virus_count, max_failed_viruses])
+	
+	# Send Clippy failure notification
+	_send_clippy_failure_update()
+	
+	if failed_virus_count >= max_failed_viruses:
+		_trigger_game_over()
+	else:
+		# El virus sigue activo como penalización
+		pass
 # ---------------------------------------------------------------------------
-# App‑based virus handling (paneles en el escritorio)
+# App‑based virus handling (usando Desktop's app system)
 # ---------------------------------------------------------------------------
-func _setup_app_spawner() -> void:
+func _setup_desktop_connection() -> void:
 	# Buscar el nodo Desktop que pertenece al grupo "desktop_manager"
 	var desktop = get_tree().get_first_node_in_group("desktop_manager")
 	if desktop:
 		desktop_manager = desktop
-		app_virus_spawner.setup(desktop)
-		print("✅ AppVirusSpawner configurado con Desktop manager")
+		print("✅ Desktop manager encontrado")
 	else:
 		push_warning("VirusController: No se encontró Desktop manager en la escena")
 
@@ -121,34 +135,20 @@ func trigger_app_infection(type: String = "") -> void:
 	current_virus_type = "app"
 	print("⚠️ SISTEMA INFECTADO (APP VIRUS) ⚠️")
 	
-	# Seleccionar virus de app
-	var virus_data = _select_app_virus(type)
-	if not virus_data or not virus_data.scene:
+	# Seleccionar virus app stats
+	var virus_app_stats = _select_app_virus(type)
+	if not virus_app_stats:
 		push_warning("VirusController: No hay app virus disponibles")
 		is_infected = false
 		return
 	
-	# Crear AppStats temporal para la app virus
-	var virus_app_stats = AppStats.new()
-	virus_app_stats.app_name = virus_data.app_name
-	virus_app_stats.scene = virus_data.scene
-	virus_app_stats.size = Vector2(500, 400) # Tamaño por defecto para virus
-	virus_app_stats.icon = virus_data.icon
-	
-	# Usar el PanelManager del Desktop para abrir la app
 	if desktop_manager == null:
 		push_error("VirusController: desktop_manager no está configurado")
 		is_infected = false
 		return
-		
-	# Acceder al panel_manager del desktop si existe, o usar open_app_from_stats como fallback
-	var session = {}
-	if "panel_manager" in desktop_manager and desktop_manager.panel_manager != null:
-		session = desktop_manager.panel_manager.spawn_app_session(virus_app_stats.scene, virus_app_stats)
-		if not session.is_empty() and not session.get("is_existing", false):
-			desktop_manager.panel_manager.animate_panel(session.get("panel"))
-	else:
-		session = desktop_manager.open_app_from_stats(virus_app_stats)
+	
+	# Usar el sistema de apps del Desktop (igual que cualquier otra app)
+	var session = desktop_manager.open_app_from_stats(virus_app_stats)
 	
 	if session.is_empty():
 		push_error("VirusController: Error al abrir app virus")
@@ -162,7 +162,16 @@ func trigger_app_infection(type: String = "") -> void:
 		virus_instance.virus_cleared.connect(_on_app_virus_cleared.bind(panel))
 		virus_instance.virus_failed.connect(_on_app_virus_failed.bind(panel))
 		virus_instance.start_infection()
+		_on_virus_started_monitor() # Monitor update
 		EventBus.navigation_blocked.emit("⚠️ APLICACIÓN SOSPECHOSA DETECTADA")
+		
+		# Send Clippy help for app virus
+		var virus_type = _get_virus_type_from_stats(virus_app_stats)
+		_send_clippy_virus_help(virus_app_stats.app_name, virus_type)
+		
+		# Ocultar botones de panel para virus
+		if panel and panel.has_method("hide_buttons"):
+			panel.hide_buttons()
 	else:
 		push_error("VirusController: No se obtuvo instancia de virus desde la app")
 		is_infected = false
@@ -171,14 +180,25 @@ func _on_app_virus_cleared(app_panel: Node) -> void:
 	print("✅ APP VIRUS LIMPIADO")
 	is_infected = false
 	current_virus_type = ""
-	# Cerrar la app del virus mediante el spawner
+	_on_virus_ended_monitor() # Monitor update
+	
+	# Cerrar la app del virus
 	if app_panel:
-		app_virus_spawner.remove_virus_app(app_panel)
+		app_panel.queue_free()
+		
 	EventBus.navigation_ready.emit()
 
 func _on_app_virus_failed(_app_panel: Node) -> void:
 	print("❌ APP VIRUS FALLÓ")
-	# Mantener la app abierta como penalización (no cerramos la app)
+	failed_virus_count += 1
+	print("⚠️ Fallos acumulados: %d/%d" % [failed_virus_count, max_failed_viruses])
+	
+	# Send Clippy failure notification
+	_send_clippy_failure_update()
+	
+	if failed_virus_count >= max_failed_viruses:
+		_trigger_game_over()
+	# Si no es game over, mantener la app abierta como penalización
 
 # ---------------------------------------------------------------------------
 # Helper selection functions
@@ -194,15 +214,15 @@ func _select_virus(specific_type: String) -> PackedScene:
 		return null
 	return available.pick_random()
 
-func _select_app_virus(specific_type: String) -> Dictionary:
+func _select_app_virus(specific_type: String) -> AppStats:
 	if specific_type != "" and app_virus_types.has(specific_type):
 		return app_virus_types[specific_type]
 	var available_keys = []
 	for key in app_virus_types:
-		if app_virus_types[key].scene != null:
+		if app_virus_types[key] != null:
 			available_keys.append(key)
 	if available_keys.is_empty():
-		return {}
+		return null
 	var random_key = available_keys.pick_random()
 	return app_virus_types[random_key]
 
@@ -216,3 +236,77 @@ func _on_challenge_completed(_node: TreeNode, win: bool) -> void:
 			trigger_app_infection()
 		else:
 			trigger_infection()
+
+# ---------------------------------------------------------------------------
+# Game Over Management
+# ---------------------------------------------------------------------------
+func _trigger_game_over() -> void:
+	print("💀 GAME OVER - Demasiados virus sin eliminar")
+	is_infected = false
+	
+	# Cerrar overlay si está activo
+	if overlay_instance and overlay_instance.visible:
+		overlay_instance.hide_overlay()
+	
+	# Emitir señal de game over (false = perdió)
+	EventBus.game_over.emit(false)
+	
+	# Resetear contador para siguiente partida
+	failed_virus_count = 0
+
+# ---------------------------------------------------------------------------
+# Clippy Integration
+# ---------------------------------------------------------------------------
+func _send_clippy_virus_help(virus_name: String, virus_type: String) -> void:
+	if not clippy:
+		return
+	
+	var event = ClippyEvent.new()
+	event.event_type = ClippyEvent.EventType.VIRUS_INFECTED
+	event.context_id = virus_type if virus_type != "" else "unknown"
+	event.payload = {
+		"virus_name": virus_name,
+		"virus_type": virus_type,
+		"current_failures": failed_virus_count,
+		"max_failures": max_failed_viruses
+	}
+	event.priority = ClippyEvent.Priority.HIGH
+	
+	clippy.handle_event(event)
+
+func _send_clippy_failure_update() -> void:
+	if not clippy:
+		return
+	
+	var event = ClippyEvent.new()
+	event.event_type = ClippyEvent.EventType.VIRUS_FAILED
+	event.payload = {
+		"failed_count": failed_virus_count,
+		"max_failures": max_failed_viruses,
+		"remaining": max_failed_viruses - failed_virus_count
+	}
+	event.priority = ClippyEvent.Priority.CRITICAL
+	
+	clippy.handle_event(event)
+
+func _get_virus_type_from_stats(stats: AppStats) -> String:
+	# Extract virus type from AppStats resource path
+	for key in app_virus_types:
+		if app_virus_types[key] == stats:
+			return key
+	return "unknown"
+
+# ---------------------------------------------------------------------------
+# System Monitor Integration
+# ---------------------------------------------------------------------------
+func _on_virus_started_monitor() -> void:
+	if has_node("/root/SystemMonitor"):
+		get_node("/root/SystemMonitor").register_virus_start()
+
+func _on_virus_ended_monitor() -> void:
+	if has_node("/root/SystemMonitor"):
+		get_node("/root/SystemMonitor").register_virus_end()
+
+func _on_system_overload() -> void:
+	print("🔥 SISTEMA SOBRECARGADO - CRASH INMINENTE")
+	_trigger_game_over()

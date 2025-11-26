@@ -33,7 +33,8 @@ enum State {
 
 ## Emitted when text is ready to display
 ## @param text: The generated text to show to player
-signal ready_to_display(text: String)
+## @param priority: Priority level of the message
+signal ready_to_display(text: String, priority: int)
 
 ## Emitted when state changes
 ## @param old_state: Previous state
@@ -178,10 +179,10 @@ func _process_next_event() -> void:
 	_progress_state.last_event_time = Time.get_ticks_msec() / 1000.0
 	_progress_state.total_display_count += 1
 	
-	# Emit signal
+	# Emit signal with priority
 	_change_state(State.WAITING_FOR_ACK)
-	print("[ClippyController] Emitting ready_to_display signal")
-	ready_to_display.emit(text)
+	print("[ClippyController] Emitting ready_to_display signal with priority %d" % event.priority)
+	ready_to_display.emit(text, event.priority)
 	
 	# Auto-acknowledge after short delay to process next event
 	await get_tree().create_timer(0.1).timeout

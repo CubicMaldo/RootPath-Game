@@ -25,4 +25,5 @@ func add_virus(virus_scene: PackedScene) -> BaseVirus:
 		return null
 	
 	container.add_child(virus_instance)
+	virus_instance.hide_buttons()
 	return virus_instance

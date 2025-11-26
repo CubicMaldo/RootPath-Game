@@ -114,6 +114,12 @@ func generate_text_for_event(event: ClippyEvent) -> String:
 			context_text = generate_hint_text(event)
 		ClippyEvent.EventType.GAME_COMPLETED:
 			context_text = generate_completion_text(event)
+		ClippyEvent.EventType.VIRUS_INFECTED:
+			context_text = generate_virus_help_text(event)
+		ClippyEvent.EventType.VIRUS_FAILED:
+			context_text = generate_virus_failure_text(event)
+		ClippyEvent.EventType.VIRUS_CLEARED:
+			context_text = generate_virus_cleared_text(event)
 	
 	# Replace template placeholders
 	return template.format({
@@ -238,6 +244,9 @@ func _initialize_templates() -> void:
 	_templates[ClippyEvent.EventType.TREE_NODE_ENTERED] = "{context}"
 	_templates[ClippyEvent.EventType.HINT_REQUESTED] = "{context}"
 	_templates[ClippyEvent.EventType.GAME_COMPLETED] = "{context}"
+	_templates[ClippyEvent.EventType.VIRUS_INFECTED] = "{context}"
+	_templates[ClippyEvent.EventType.VIRUS_FAILED] = "{context}"
+	_templates[ClippyEvent.EventType.VIRUS_CLEARED] = "{context}"
 
 func _generate_progress_text_for_action(payload: Dictionary) -> String:
 	var action: String = str(payload.get("action", ""))
@@ -296,3 +305,70 @@ func _prettify_identifier(id_text: String) -> String:
 		if words[i].length() > 0:
 			words[i] = words[i][0].to_upper() + words[i].substr(1)
 	return " ".join(words)
+
+# ---------------------------------------------------------------------------
+# Virus Event Text Generation
+# ---------------------------------------------------------------------------
+
+## Generate virus help text
+func generate_virus_help_text(event: ClippyEvent) -> String:
+	var virus_type = event.context_id
+	var virus_name = event.payload.get("virus_name", "Virus")
+	
+	# Get localized help text
+	var help_text = _get_virus_help_localized(virus_type)
+	
+	return tr("CLIPPY_VIRUS_INFECTED").format({
+		"virus_name": virus_name,
+		"help_text": help_text
+	})
+
+## Generate virus failure text
+func generate_virus_failure_text(event: ClippyEvent) -> String:
+	var failed = event.payload.get("failed_count", 0)
+	var max_fails = event.payload.get("max_failures", 3)
+	var remaining = event.payload.get("remaining", 0)
+	
+	if remaining == 0:
+		return tr("CLIPPY_VIRUS_FAILED_CRITICAL").format({
+			"failed_count": failed,
+			"max_failures": max_fails
+		})
+	elif remaining == 1:
+		return tr("CLIPPY_VIRUS_FAILED_WARNING").format({
+			"failed_count": failed,
+			"max_failures": max_fails,
+			"remaining": remaining
+		})
+	else:
+		return tr("CLIPPY_VIRUS_FAILED_NORMAL").format({
+			"failed_count": failed,
+			"max_failures": max_fails,
+			"remaining": remaining
+		})
+
+## Generate virus cleared text
+func generate_virus_cleared_text(event: ClippyEvent) -> String:
+	var virus_name = event.payload.get("virus_name", "virus")
+	return tr("CLIPPY_VIRUS_CLEARED").format({"virus_name": virus_name})
+
+## Get localized help for virus type
+func _get_virus_help_localized(virus_type: String) -> String:
+	# Try to find virus help section in content index first
+	if _content_index:
+		var section = _content_index.find_section(virus_type)
+		if section != "":
+			return section.strip_edges()
+	
+	# Map virus type to localization key
+	var help_key_map = {
+		"fake_update": "CLIPPY_VIRUS_HELP_FAKE_UPDATE",
+		"captcha": "CLIPPY_VIRUS_HELP_CAPTCHA",
+		"survey": "CLIPPY_VIRUS_HELP_SURVEY",
+		"glitch": "CLIPPY_VIRUS_HELP_GLITCH",
+		"adware": "CLIPPY_VIRUS_HELP_ADWARE",
+		"phishing": "CLIPPY_VIRUS_HELP_PHISHING"
+	}
+	
+	var help_key = help_key_map.get(virus_type, "CLIPPY_VIRUS_HELP_DEFAULT")
+	return tr(help_key)

@@ -10,7 +10,7 @@ const POPUP_SCENE = preload("res://src/virus/components/PopUpWindow.tscn")
 
 var active_windows: int = 0
 var max_windows: int = 15
-var initial_windows: int = 3
+var initial_windows: int = 5
 
 func _ready():
 	return
@@ -77,4 +77,4 @@ func _complete_virus():
 func _fail_virus():
 	count_label.text = "DESBORDAMIENTO DE MEMORIA"
 	_on_virus_failed()
-	start_infection() # Reiniciar
+	queue_free()

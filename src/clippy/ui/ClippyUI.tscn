@@ -1,6 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://c2jcesi1anwun"]
+[gd_scene load_steps=6 format=3 uid="uid://pqa8425hjrjl"]
 
-[ext_resource type="Script" uid="uid://crnixvewis8yp" path="res://src/clippy/ClippyUI.gd" id="1"]
+[ext_resource type="Script" uid="uid://crnixvewis8yp" path="res://src/clippy/ui/ClippyUI.gd" id="1"]
 [ext_resource type="Shader" uid="uid://dwj1gcianwteq" path="res://assets/shaders/blur.gdshader" id="1_kvrtk"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_am1b4"]

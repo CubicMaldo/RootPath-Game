@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://fake_update_virus"]
+[gd_scene load_steps=2 format=3 uid="uid://cfxjg3ttlme65"]
 
-[ext_resource type="Script" path="res://src/virus/app_viruses/FakeUpdateVirus.gd" id="1_virus"]
+[ext_resource type="Script" uid="uid://b3stpo5nb5eoq" path="res://src/virus/types/app_viruses/FakeUpdateVirus.gd" id="1_virus"]
 
 [node name="FakeUpdateVirus" type="Control"]
 layout_mode = 3
@@ -16,10 +16,6 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 40.0
-offset_top = 40.0
-offset_right = -40.0
-offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
@@ -40,8 +36,6 @@ fit_content = true
 [node name="ProgressBar" type="ProgressBar" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-max_value = 100.0
-show_percentage = true
 
 [node name="StatusLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
@@ -63,5 +57,3 @@ layout_mode = 2
 text = "INSTALAR AHORA"
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 1.0
-autostart = false

@@ -23,8 +23,8 @@ Si NO aparece:
 
 - Verifica que `project.godot` tenga las líneas:
   ```
-  Clippy="*res://src/clippy/ClippyController.gd"
-  ClippyBridge="*res://src/clippy/ClippyEventBridge.gd"
+  Clippy="*res://src/clippy/core/ClippyController.gd"
+  ClippyBridge="*res://src/clippy/events/ClippyEventBridge.gd"
   ```
 - **Reinicia** Godot para que cargue los autoloads
 
@@ -51,7 +51,7 @@ Si NO aparece:
 ### Método 1: Usar TestClippyEmitter
 
 1. Abre `MainMenu.tscn` o `Desktop.tscn` en Godot
-2. Añade nodo hijo: `Node` → Attach Script → `res://src/clippy/TestClippyEmitter.gd`
+2. Añade nodo hijo: `Node` → Attach Script → `res://src/clippy/tests/TestClippyEmitter.gd`
 3. Ejecuta el juego
 4. Presiona teclas:
    - **T** = Tutorial

@@ -15,7 +15,7 @@ run/main_scene="uid://bd6sncl22y8db"
 config/features=PackedStringArray("4.5", "Forward Plus")
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/fullsize=false
-boot_splash/image="uid://y2vcy8l8hge0"
+boot_splash/image="uid://foj20vsxgeod"
 config/icon="res://icon.svg"
 
 [autoload]
@@ -23,10 +23,12 @@ config/icon="res://icon.svg"
 Global="*res://src/autoloads/Global.gd"
 EventBus="*res://src/autoloads/EventBus.gd"
 SettingsManager="*res://src/autoloads/SettingsManager.gd"
+DebugLogger="*res://src/autoloads/DebugLogger.gd"
 SignalLens="*res://addons/signal_lens/autoload/signal_lens_autoload.gd"
-Clippy="*res://src/clippy/ClippyController.gd"
-ClippyBridge="*res://src/clippy/ClippyEventBridge.gd"
+Clippy="*res://src/clippy/core/ClippyController.gd"
+ClippyBridge="*res://src/clippy/events/ClippyEventBridge.gd"
 VirusController="*res://src/autoloads/VirusController.gd"
+SystemMonitor="*res://src/autoloads/SystemMonitor.gd"
 
 [display]
 

@@ -54,7 +54,7 @@ func _setup_new_challenge():
 	
 	# Seleccionar desafío aleatorio
 	var challenge = CAPTCHA_CHALLENGES.pick_random()
-	correct_indices = challenge.correct
+	correct_indices.assign(challenge.correct)
 	instruction_label.text = challenge.instruction + "\n[color=#888888]%s[/color]" % challenge.decoy_text
 	
 	# Crear 9 casillas

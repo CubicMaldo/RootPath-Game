@@ -5,16 +5,16 @@ extends RefCounted
 ## Reemplaza múltiples booleanos por una máquina de estados clara
 
 enum State {
-	IDLE,           # Sin desafío activo
-	STARTING,       # Iniciando desafío
-	ACTIVE,         # Desafío en progreso
-	RESOLVING,      # Procesando resultado
-	RETRY_PENDING   # Esperando para reintentar
+	IDLE, # Sin desafío activo
+	STARTING, # Iniciando desafío
+	ACTIVE, # Desafío en progreso
+	RESOLVING, # Procesando resultado
+	RETRY_PENDING # Esperando para reintentar
 }
 
 var current_state: State = State.IDLE
 var current_challenge_node: TreeNode = null
-var challenge_results: Dictionary = {}  # node_id -> bool
+var challenge_results: Dictionary = {} # node_id -> bool
 
 func _init():
 	#print("[ChallengeStateMachine] Inicializado")
@@ -85,7 +85,7 @@ func reset() -> void:
 	
 	# Notificar que la navegación está disponible nuevamente
 	if was_active:
-		EventBus.navigation_blocked.emit("")  # String vacío = desbloqueado
+		EventBus.navigation_blocked.emit("") # String vacío = desbloqueado
 
 ## Marca que el retry está listo para ejecutarse
 func ready_for_retry() -> void:
@@ -100,7 +100,7 @@ func can_start_challenge(node: TreeNode) -> bool:
 		return false
 	var node_id := node.get_instance_id()
 	if challenge_results.has(node_id):
-		return false  # Ya completado
+		return false # Ya completado
 	if node.challenge_completed:
 		return false
 	return true

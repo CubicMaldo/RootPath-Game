@@ -22,7 +22,10 @@ enum EventType {
 	ACHIEVEMENT, ## Fired when player unlocks an achievement
 	TREE_NODE_ENTERED, ## Fired when entering a tree node
 	HINT_REQUESTED, ## Fired when player requests a hint
-	GAME_COMPLETED ## Fired when game is completed
+	GAME_COMPLETED, ## Fired when game is completed
+	VIRUS_INFECTED, ## Fired when a virus infects the system
+	VIRUS_FAILED, ## Fired when player fails to clear a virus
+	VIRUS_CLEARED ## Fired when player successfully clears a virus
 }
 
 ## Type of event

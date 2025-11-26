@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://bd6sncl22y8db"]
+[gd_scene load_steps=8 format=3 uid="uid://bd6sncl22y8db"]
 
 [ext_resource type="Script" uid="uid://dnr4ilkegvrxp" path="res://src/menu/MainMenu.gd" id="1_main_menu"]
 [ext_resource type="Script" uid="uid://b21ns3whpr5x3" path="res://src/menu/TreeVisualEffect.gd" id="1_tree_effect"]
 [ext_resource type="Shader" uid="uid://g3alu3rvi1hs" path="res://assets/shaders/balatro.gdshader" id="2_s3dsm"]
-[ext_resource type="PackedScene" uid="uid://c2jcesi1anwun" path="res://src/clippy/ClippyUI.tscn" id="4_2nud1"]
+[ext_resource type="PackedScene" uid="uid://pqa8425hjrjl" path="res://src/clippy/ui/ClippyUI.tscn" id="4_2nud1"]
+[ext_resource type="Texture2D" uid="uid://foj20vsxgeod" path="res://Game_ICON.png" id="4_dftre"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uwj7d"]
 shader = ExtResource("2_s3dsm")
@@ -58,7 +59,7 @@ fade_speed = 0.505
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
-offset_right = 300.0
+offset_right = 350.0
 grow_vertical = 2
 
 [node name="MenuContainer" type="VBoxContainer" parent="LeftPanel"]
@@ -75,6 +76,12 @@ offset_bottom = 60.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="LeftPanel/MenuContainer"]
+layout_mode = 2
+texture = ExtResource("4_dftre")
+expand_mode = 4
+stretch_mode = 4
 
 [node name="Label" type="Label" parent="LeftPanel/MenuContainer"]
 material = SubResource("ShaderMaterial_s3dsm")

@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://captcha_virus"]
+[gd_scene load_steps=2 format=3 uid="uid://ck5kihlr1m6os"]
 
-[ext_resource type="Script" path="res://src/virus/app_viruses/CaptchaVirus.gd" id="1_virus"]
+[ext_resource type="Script" uid="uid://dp6yxl7y6sicg" path="res://src/virus/types/app_viruses/CaptchaVirus.gd" id="1_virus"]
 
 [node name="CaptchaVirus" type="Control"]
 layout_mode = 3
@@ -16,19 +16,9 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 40.0
-offset_top = 40.0
-offset_right = -40.0
-offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
-
-[node name="TitleLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "🤖 Verificación de Seguridad"
-horizontal_alignment = 1
 
 [node name="InstructionLabel" type="RichTextLabel" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 60)

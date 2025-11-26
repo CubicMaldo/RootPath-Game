@@ -17,7 +17,7 @@ signal virus_failed
 
 var is_active: bool = false
 var progress: float = 0.0
-var progress_speed: float = 25.0 # %/segundo
+var progress_speed: float = 3.0 # %/segundo
 
 func _ready():
 	btn_cancel.pressed.connect(_on_cancel_pressed)

@@ -163,3 +163,42 @@ msgstr "Piensa cuidadosamente sobre la información presentada. Busca patrones y
 # Completar juego
 msgid "CLIPPY_GAME_COMPLETED"
 msgstr "¡Felicitaciones! Has completado el juego. ¡Excelente trabajo dominando estos conceptos de ciberseguridad!"
+
+# Mensajes de virus
+msgid "CLIPPY_VIRUS_INFECTED"
+msgstr "⚠️ **{virus_name} detectado!**\n\n{help_text}"
+
+msgid "CLIPPY_VIRUS_CLEARED"
+msgstr "✅ **¡Excelente!** Has eliminado el {virus_name} exitosamente. ¡Buen trabajo!"
+
+msgid "CLIPPY_VIRUS_FAILED_CRITICAL"
+msgstr "💀 **¡CRÍTICO!** Has fallado {failed_count}/{max_failures} virus. ¡El siguiente fallo es GAME OVER!"
+
+msgid "CLIPPY_VIRUS_FAILED_WARNING"
+msgstr "⚠️ **Advertencia:** Has fallado {failed_count}/{max_failures} virus. Solo te queda {remaining} oportunidad más."
+
+msgid "CLIPPY_VIRUS_FAILED_NORMAL"
+msgstr "❌ Fallaste al eliminar el virus. Llevas {failed_count}/{max_failures} fallos. Te quedan {remaining} oportunidades."
+
+# Ayuda para cada tipo de virus
+msgid "CLIPPY_VIRUS_HELP_FAKE_UPDATE"
+msgstr "¡Cuidado! Este virus simula una actualización falsa de Windows.\n\n**Cómo eliminar:** Cancela la instalación antes de que se complete. No presiones 'Instalar' - ¡es una trampa!"
+
+msgid "CLIPPY_VIRUS_HELP_CAPTCHA"
+msgstr "Este virus presenta CAPTCHAs imposibles o engañosos.\n\n**Cómo eliminar:** Intenta resolver el CAPTCHA correctamente. Tienes 3 intentos - ¡piensa bien antes de verificar!"
+
+msgid "CLIPPY_VIRUS_HELP_SURVEY"
+msgstr "Un virus disfrazado de encuesta que intenta robar tus datos.\n\n**Cómo eliminar:** Responde solo las preguntas seguras. Evita compartir información personal sensible."
+
+msgid "CLIPPY_VIRUS_HELP_GLITCH"
+msgstr "Virus de fragmentación que desordena tu pantalla.\n\n**Cómo eliminar:** Reorganiza los fragmentos en el orden correcto antes de que se acabe el tiempo."
+
+msgid "CLIPPY_VIRUS_HELP_ADWARE"
+msgstr "Ventanas emergentes molestas que se multiplican.\n\n**Cómo eliminar:** Cierra todas las ventanas de publicidad sin hacer clic en los anuncios."
+
+msgid "CLIPPY_VIRUS_HELP_PHISHING"
+msgstr "Virus que imita mensajes legítimos para engañarte.\n\n**Cómo eliminar:** Identifica el mensaje falso y márcalo como spam."
+
+msgid "CLIPPY_VIRUS_HELP_DEFAULT"
+msgstr "Se ha detectado un virus. ¡Elimínalo rápidamente!"
+

@@ -8,8 +8,8 @@ Open **Project Settings > Autoload** and add (in this order):
 
 ```
 1. EventBus (already exists) - res://assets/scripts/core/EventBus.gd
-2. Clippy - res://src/clippy/ClippyController.gd
-3. ClippyBridge - res://src/clippy/ClippyEventBridge.gd
+2. Clippy - res://src/clippy/core/ClippyController.gd
+3. ClippyBridge - res://src/clippy/events/ClippyEventBridge.gd
 ```
 
 ### Step 2: Add Localization
@@ -24,7 +24,7 @@ Open **Project Settings > Autoload** and add (in this order):
 Open `principalGameScene.tscn` (or your main game scene) and:
 
 1. Add Child Node > CanvasLayer
-2. Attach Scene: `res://src/clippy/ClippyUI.tscn`
+2. Attach Scene: `res://src/clippy/ui/ClippyUI.tscn`
 
 **Done!** Clippy will now automatically respond to game events.
 

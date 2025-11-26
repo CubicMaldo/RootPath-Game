@@ -33,7 +33,7 @@ tests/clippy/
 
 ```
 Project Settings > Autoload
-  Script: res://src/clippy/ClippyController.gd
+  Script: res://src/clippy/core/ClippyController.gd
   Node Name: Clippy
 ```
 

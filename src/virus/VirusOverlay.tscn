@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://virusoverlay123"]
+[gd_scene load_steps=2 format=3 uid="uid://bu4imihlp3lm"]
 
-[ext_resource type="Script" path="res://src/virus/VirusOverlay.gd" id="1_virus"]
+[ext_resource type="Script" uid="uid://ccx2d4tddbpav" path="res://src/virus/VirusOverlay.gd" id="1_virus"]
 
 [node name="VirusOverlay" type="CanvasLayer"]
 layer = 100
