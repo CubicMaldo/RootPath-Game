@@ -120,6 +120,8 @@ func generate_text_for_event(event: ClippyEvent) -> String:
 			context_text = generate_virus_failure_text(event)
 		ClippyEvent.EventType.VIRUS_CLEARED:
 			context_text = generate_virus_cleared_text(event)
+		ClippyEvent.EventType.DIRECT_MESSAGE:
+			context_text = event.payload.get("message", "")
 	
 	# Replace template placeholders
 	return template.format({
@@ -247,6 +249,7 @@ func _initialize_templates() -> void:
 	_templates[ClippyEvent.EventType.VIRUS_INFECTED] = "{context}"
 	_templates[ClippyEvent.EventType.VIRUS_FAILED] = "{context}"
 	_templates[ClippyEvent.EventType.VIRUS_CLEARED] = "{context}"
+	_templates[ClippyEvent.EventType.DIRECT_MESSAGE] = "{context}"
 
 func _generate_progress_text_for_action(payload: Dictionary) -> String:
 	var action: String = str(payload.get("action", ""))

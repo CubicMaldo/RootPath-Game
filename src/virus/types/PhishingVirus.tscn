@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://phishingvirus001"]
+[gd_scene load_steps=2 format=3 uid="uid://bi0sb42spo7r5"]
 
-[ext_resource type="Script" path="res://src/virus/types/PhishingVirus.gd" id="1_phishing"]
+[ext_resource type="Script" uid="uid://1813cui34drs" path="res://src/virus/types/PhishingVirus.gd" id="1_phishing"]
 
 [node name="PhishingVirus" type="Control"]
 layout_mode = 3
@@ -18,7 +18,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0, 0.0, 0.2, 0.9)
+color = Color(0, 0, 0.2, 0.50980395)
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1

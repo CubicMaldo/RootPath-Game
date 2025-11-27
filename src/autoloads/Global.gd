@@ -7,9 +7,11 @@ var treeMap : TreeAppController
 
 ## Optional autoload references cached for backwards compatibility
 var ClippyBridge: Node = null
+var _intro_message_shown := false
 
 func _ready() -> void:
 	_refresh_optional_singletons()
+	_show_clippy_intro()
 
 func ensure_tree_map() -> TreeAppController:
 	## Lazily create the TreeAppController when the app is opened
@@ -31,6 +33,14 @@ func get_singleton(singleton_name: StringName) -> Node:
 
 func _refresh_optional_singletons() -> void:
 	ClippyBridge = _get_singleton("ClippyBridge")
+
+func _show_clippy_intro() -> void:
+	if _intro_message_shown:
+		return
+	if ClippyBridge == null:
+		return
+	_intro_message_shown = true
+	ClippyBridge.notify_clippy("Bienvenido a Safe TreeNet. Desde el escritorio abre el Mapa del Árbol para sincronizarte con las ramas activas, elegir tu siguiente nodo y desbloquear los minijuegos que protegen la red.", "tutorial")
 
 func _get_singleton(singleton_name: StringName) -> Node:
 	var tree := get_tree()

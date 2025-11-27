@@ -25,7 +25,8 @@ enum EventType {
 	GAME_COMPLETED, ## Fired when game is completed
 	VIRUS_INFECTED, ## Fired when a virus infects the system
 	VIRUS_FAILED, ## Fired when player fails to clear a virus
-	VIRUS_CLEARED ## Fired when player successfully clears a virus
+	VIRUS_CLEARED, ## Fired when player successfully clears a virus
+	DIRECT_MESSAGE ## Fired when a direct message is sent
 }
 
 ## Type of event

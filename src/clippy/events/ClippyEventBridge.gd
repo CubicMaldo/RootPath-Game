@@ -58,6 +58,26 @@ func _connect_eventbus_signals() -> void:
 	# Resource events
 	#EventBus.resources_loaded.connect(_on_resources_loaded)
 
+## Send a direct message to Clippy (used by minigames)
+## @param message: The text to display
+## @param type: Message type ("tutorial", "success", "warning", "error")
+func notify_clippy(message: String, type: String = "tutorial") -> void:
+	var event = ClippyEvent.new()
+	event.event_type = ClippyEvent.EventType.DIRECT_MESSAGE
+	event.payload = {"message": message}
+	
+	match type:
+		"success":
+			event.priority = ClippyEvent.Priority.HIGH
+		"warning":
+			event.priority = ClippyEvent.Priority.HIGH
+		"error":
+			event.priority = ClippyEvent.Priority.CRITICAL
+		_:
+			event.priority = ClippyEvent.Priority.NORMAL
+			
+	_send_clippy_event(event)
+
 ## Send event to Clippy
 func _send_clippy_event(event: ClippyEvent) -> void:
 	if clippy != null:

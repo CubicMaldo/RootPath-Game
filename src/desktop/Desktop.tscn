@@ -178,18 +178,22 @@ layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_3iu53")
 
 [node name="App2" parent="DesktopMargin/AppContainer" instance=ExtResource("2_06q4v")]
+visible = false
 layout_mode = 2
 appStats = ExtResource("6_blv04")
 
 [node name="App3" parent="DesktopMargin/AppContainer" instance=ExtResource("2_06q4v")]
+visible = false
 layout_mode = 2
 appStats = ExtResource("7_pwdcrk")
 
 [node name="App4" parent="DesktopMargin/AppContainer" instance=ExtResource("2_06q4v")]
+visible = false
 layout_mode = 2
 appStats = ExtResource("7_netdef")
 
 [node name="App5" parent="DesktopMargin/AppContainer" instance=ExtResource("2_06q4v")]
+visible = false
 layout_mode = 2
 appStats = ExtResource("8_pwstr")
 
