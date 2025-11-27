@@ -93,7 +93,10 @@ func get_template(event_type: ClippyEvent.EventType) -> String:
 func generate_text_for_event(event: ClippyEvent) -> String:
 	if event == null or not event.is_valid():
 		return tr("CLIPPY_ERROR_INVALID_EVENT")
-	
+
+	if event.payload.has("custom_text"):
+		return str(event.payload.get("custom_text", ""))
+
 	var template = get_template(event.event_type)
 	var context_text = ""
 	

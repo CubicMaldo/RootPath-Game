@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="VirusDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://src/virus/resources/VirusDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://src/desktop/resources/CaptchaVirus.tres" id="2"]
+[ext_resource type="Script" path="res://src/virus/resources/VirusParameterConfig.gd" id="3"]
+
+[sub_resource type="Resource" id="1_param" script=ExtResource("3")]
+property_name = "max_attempts"
+scaling_mode = 1
+base_value = 3.0
+per_level_delta = -1.0
+min_value = 1.0
+max_value = 5.0
+apply_as_integer = true
+
+[resource]
+script = ExtResource("1")
+identifier = "captcha"
+display_name = "Captcha Virus"
+category = 1
+app_stats = ExtResource("2")
+spawn_weight = 0.9
+min_failures = 0
+max_failures = 0
+base_time_limit = 0.0
+alert_message = "CAPTCHAs imposibles bloquean aplicaciones legítimas."
+clippy_hint = "Selecciona únicamente las casillas que cumplen la instrucción exacta; evita los engaños."
+monitor_spike = 14.0
+accent_color = Color(0.15, 0.78, 0.85, 1)
+parameter_configs = [SubResource("1_param")]

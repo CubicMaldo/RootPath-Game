@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="VirusDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://src/virus/resources/VirusDefinition.gd" id="1"]
+[ext_resource type="PackedScene" path="res://src/virus/types/AdwareVirus.tscn" id="2"]
+[ext_resource type="Script" path="res://src/virus/resources/VirusParameterConfig.gd" id="3"]
+
+[sub_resource type="Resource" id="1_param" script=ExtResource("3")]
+property_name = "max_windows"
+scaling_mode = 1
+base_value = 15.0
+per_level_delta = 2.0
+min_value = 10.0
+max_value = 30.0
+apply_as_integer = true
+
+[sub_resource type="Resource" id="2_param" script=ExtResource("3")]
+property_name = "initial_windows"
+scaling_mode = 1
+base_value = 5.0
+per_level_delta = 1.0
+min_value = 3.0
+max_value = 12.0
+apply_as_integer = true
+
+[resource]
+script = ExtResource("1")
+identifier = "adware"
+display_name = "Adware Virus"
+category = 0
+virus_scene = ExtResource("2")
+spawn_weight = 1.0
+min_failures = 0
+max_failures = 0
+base_time_limit = 0.0
+alert_message = "Ventanas emergentes están saturando la memoria."
+clippy_hint = "Cierra todas las ventanas; si una se duplica, elimínala primero."
+monitor_spike = 22.0
+accent_color = Color(1, 0.57, 0.3, 1)
+parameter_configs = [SubResource("1_param"), SubResource("2_param")]

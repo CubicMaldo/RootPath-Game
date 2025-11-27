@@ -272,6 +272,30 @@ offset_bottom = 91.0
 grow_horizontal = 0
 grow_vertical = 2
 
+[node name="DesktopBanner" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -460.0
+offset_top = 40.0
+offset_right = 460.0
+offset_bottom = 220.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lswqd")
+
+[node name="BannerLabel" type="RichTextLabel" parent="CanvasLayer/DesktopBanner"]
+layout_mode = 2
+bbcode_enabled = true
+scroll_active = false
+fit_content = true
+custom_minimum_size = Vector2(0, 120)
+text = ""
+autowrap_mode = 2
+theme_override_font_sizes/normal_font_size = 24
+theme_override_colors/default_color = Color(1, 1, 1, 0.95)
+
 [node name="EndingScreen" type="ColorRect" parent="CanvasLayer"]
 visible = false
 anchors_preset = 15

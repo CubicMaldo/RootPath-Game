@@ -18,6 +18,8 @@ func _ready():
 	pass
 
 func start_infection() -> void:
+	time_limit = get_config_value("time_limit", time_limit)
+	total_fragments = int(get_config_value("total_fragments", total_fragments))
 	is_active = true
 	current_time = 0.0
 	_setup_puzzle()

@@ -1,11 +1,16 @@
 extends Control
 
+const ClippyEventResource := preload("res://src/clippy/events/ClippyEvent.gd")
+
 @onready var app_desktop_container: GridContainer = $DesktopMargin/AppContainer
 @onready var taskbar_container: Container = %TaskBar
 @export var apps_panel_scene: PackedScene
 @onready var game_over_visuals: ColorRect = $CanvasLayer/EndingScreen
+@onready var desktop_banner: PanelContainer = $CanvasLayer/DesktopBanner
+@onready var banner_label: RichTextLabel = $CanvasLayer/DesktopBanner/BannerLabel
 
 var panel_manager: PanelManager
+var _banner_tween: Tween
 
 func _ready():
 	add_to_group("desktop_manager")
@@ -21,6 +26,7 @@ func _ready():
 			if icon_cb != null:
 				icon.connect("open_app", icon_cb)
 	EventBus.game_over.connect(_on_game_over)
+	EventBus.challenge_completed.connect(_on_challenge_banner)
 	
 	# Create simple System Monitor UI
 	_create_system_monitor_ui()
@@ -249,3 +255,79 @@ func _show_tutorial_sequence() -> void:
 func _kill_tween_if_running(tween_ref: Tween) -> void:
 	if tween_ref and tween_ref.is_running():
 		tween_ref.kill()
+
+func _broadcast_desktop_intro() -> void:
+	var instruction := "[b]Inicio del Operativo RootPath[/b]\nHaz clic en el icono del árbol para desplegar el mapa y comenzar la secuencia de recuperación."
+	var lore := "[color=#9ef7ff]Crónica de Superficie[/color]\nLos sensores detectan un enjambre de intrusiones silenciosas. Cada aplicación es una raíz viva; protégela antes de que la red quede en sombras."
+	_send_clippy_custom_text("desktop_instruction", instruction, ClippyEvent.Priority.HIGH, 0.05)
+	_send_clippy_custom_text("desktop_lore", lore, ClippyEvent.Priority.NORMAL, 0.08)
+	_show_banner("%s\n\n%s" % [instruction, lore], 8.0, Color(0.6, 0.85, 1.0))
+
+func _send_clippy_custom_text(context_id: String, text: String, priority: ClippyEvent.Priority, completion: float) -> void:
+	if text.is_empty():
+		return
+	if not has_node("/root/Clippy"):
+		return
+	var event := ClippyEventResource.new()
+	event.event_type = ClippyEvent.EventType.PROGRESS_UPDATE
+	event.context_id = context_id
+	event.priority = priority
+	var safe_completion := clampf(completion, 0.0, 1.0)
+	event.payload = {
+		"completion": safe_completion,
+		"custom_text": text
+	}
+	get_node("/root/Clippy").handle_event(event)
+
+func _on_challenge_banner(node: TreeNode, win: bool) -> void:
+	var label := _resolve_node_label(node)
+	var message := ""
+	var accent := Color(1, 0.7, 0.4)
+	if win:
+		message = "[b]%s protegido[/b]\nEl malware retrocedió dejando un registro cifrado para tus archivos." % label
+		accent = Color(0.55, 0.95, 0.65)
+	else:
+		message = "[b]%s comprometido[/b]\nRefuerza defensas y reintenta antes de que la infección se propague." % label
+	_show_banner(message, 6.0, accent)
+
+func _show_banner(text: String, duration: float, accent_color: Color = Color.WHITE) -> void:
+	if desktop_banner == null or banner_label == null:
+		return
+	banner_label.bbcode_text = text
+	banner_label.add_theme_color_override("default_color", accent_color)
+	desktop_banner.visible = true
+	desktop_banner.modulate.a = 0.0
+	_kill_banner_tween()
+	_banner_tween = create_tween()
+	_banner_tween.tween_property(desktop_banner, "modulate:a", 1.0, 0.35)
+	_banner_tween.tween_interval(max(duration, 0.5))
+	_banner_tween.tween_property(desktop_banner, "modulate:a", 0.45, 0.15)
+	_banner_tween.tween_property(desktop_banner, "modulate:a", 0.0, 0.45)
+	_banner_tween.tween_callback(func(): desktop_banner.visible = false)
+
+func _kill_banner_tween() -> void:
+	if _banner_tween and _banner_tween.is_running():
+		_banner_tween.kill()
+
+func _resolve_node_label(node: TreeNode) -> String:
+	if node == null:
+		return "Nodo desconocido"
+	if node.app_resource != null and node.app_resource.app_name != "":
+		return node.app_resource.app_name
+	return "Nodo %s" % _node_type_name_for_value(node)
+
+func _node_type_name_for_value(node: TreeNode) -> String:
+	if node == null:
+		return "desconocido"
+	var tipo := node.tipo if "tipo" in node else -1
+	match tipo:
+		0:
+			return "Inicio"
+		1:
+			return "Desafío"
+		2:
+			return "Pista"
+		3:
+			return "Final"
+		_:
+			return "Desconocido"

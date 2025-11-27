@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="VirusDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://src/virus/resources/VirusDefinition.gd" id="1"]
+[ext_resource type="PackedScene" path="res://src/virus/types/PopupVirus.tscn" id="2"]
+[ext_resource type="Script" path="res://src/virus/resources/VirusParameterConfig.gd" id="3"]
+
+[sub_resource type="Resource" id="1_param" script=ExtResource("3")]
+property_name = "time_limit"
+scaling_mode = 1
+base_value = 15.0
+per_level_delta = -1.0
+min_value = 6.0
+max_value = 25.0
+apply_as_integer = false
+
+[sub_resource type="Resource" id="2_param" script=ExtResource("3")]
+property_name = "popup_count"
+scaling_mode = 1
+base_value = 5.0
+per_level_delta = 1.0
+min_value = 3.0
+max_value = 12.0
+apply_as_integer = true
+
+[resource]
+script = ExtResource("1")
+identifier = "popup"
+display_name = "Popup Virus"
+category = 0
+virus_scene = ExtResource("2")
+spawn_weight = 1.2
+min_failures = 0
+max_failures = 0
+base_time_limit = 15.0
+alert_message = "Alertas fraudulentas toman la pantalla completa."
+clippy_hint = "Cierra cada recuadro rojo; algunos generan otro si tardas demasiado."
+monitor_spike = 17.0
+accent_color = Color(0.97, 0.33, 0.33, 1)
+parameter_configs = [SubResource("1_param"), SubResource("2_param")]

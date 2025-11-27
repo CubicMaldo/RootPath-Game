@@ -17,6 +17,8 @@ func _ready():
 	#start_infection()
 
 func start_infection() -> void:
+	max_windows = int(get_config_value("max_windows", max_windows))
+	initial_windows = int(get_config_value("initial_windows", initial_windows))
 	# Limpiar
 	for child in windows_container.get_children():
 		child.queue_free()

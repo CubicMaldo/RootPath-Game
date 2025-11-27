@@ -22,11 +22,9 @@ const FAKE_TEXTS = [
 	"Restaurar_Sistema",
 	"Restaurar.Sistema"
 ]
-func _ready():
-	#return
-	start_infection()
 
 func start_infection() -> void:
+	time_limit = get_config_value("time_limit", time_limit)
 	is_active = true
 	current_time = 0.0
 	_setup_buttons()

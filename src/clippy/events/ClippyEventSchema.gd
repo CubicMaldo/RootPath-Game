@@ -107,12 +107,13 @@ static func get_schema(event_type: ClippyEvent.EventType) -> Dictionary:
 					FieldSchema.new("completion", TYPE_FLOAT, false),
 					FieldSchema.new("action", TYPE_STRING, false),
 					FieldSchema.new("new_score", TYPE_INT, false),
-					FieldSchema.new("node_id", TYPE_STRING, false)
+					FieldSchema.new("node_id", TYPE_STRING, false),
+					FieldSchema.new("custom_text", TYPE_STRING, false)
 				],
 				"custom_validation": func(payload: Dictionary, result: ValidationResult):
 					# Must have at least one progress indicator
-					if not (payload.has("completion") or payload.has("action") or payload.has("new_score")):
-						result.add_error("PROGRESS_UPDATE must have at least one of: completion, action, or new_score")
+					if not (payload.has("completion") or payload.has("action") or payload.has("new_score") or payload.has("custom_text")):
+						result.add_error("PROGRESS_UPDATE must have at least one of: completion, action, new_score, or custom_text")
 					
 					# Validate completion range
 					if payload.has("completion"):

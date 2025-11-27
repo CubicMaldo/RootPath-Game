@@ -1,11 +1,8 @@
-extends Control
+extends BaseVirus
 
 class_name CaptchaVirus
 
 ## Virus que presenta CAPTCHAs imposibles o engañosos
-
-signal virus_cleared
-signal virus_failed
 
 @onready var image_container = $VBoxContainer/ImageContainer
 @onready var instruction_label = $VBoxContainer/InstructionLabel
@@ -40,6 +37,7 @@ func _ready():
 	verify_button.pressed.connect(_on_verify_pressed)
 
 func start_infection() -> void:
+	max_attempts = int(get_config_value("max_attempts", max_attempts))
 	current_attempts = 0
 	_setup_new_challenge()
 
@@ -85,13 +83,13 @@ func _on_verify_pressed():
 		instruction_label.text = "✅ CAPTCHA RESUELTO"
 		instruction_label.modulate = Color(0, 1, 0)
 		await get_tree().create_timer(1.0).timeout
-		virus_cleared.emit()
+		_on_virus_cleared()
 	else:
 		if current_attempts >= max_attempts:
 			instruction_label.text = "❌ DEMASIADOS INTENTOS FALLIDOS"
 			instruction_label.modulate = Color(1, 0, 0)
 			await get_tree().create_timer(1.0).timeout
-			virus_failed.emit()
+			_on_virus_failed()
 		else:
 			instruction_label.text = "❌ Incorrecto. Intenta de nuevo."
 			instruction_label.modulate = Color(1, 0.5, 0)
