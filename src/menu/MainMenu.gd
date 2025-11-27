@@ -35,6 +35,7 @@ func _on_play_pressed() -> void:
 
 func _start_game() -> void:
 	print("[MainMenu] Iniciando juego...")
+	_show_clippy_intro()
 	get_tree().change_scene_to_file(GAME_SCENE_PATH)
 
 func _on_settings_pressed() -> void:
@@ -44,3 +45,7 @@ func _on_settings_pressed() -> void:
 func _on_quit_pressed() -> void:
 	print("[MainMenu] Saliendo del juego...")
 	get_tree().quit()
+
+func _show_clippy_intro() -> void:
+	# Set flag for desktop to show intro when ready
+	Global.should_show_clippy_intro = true

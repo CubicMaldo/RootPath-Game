@@ -16,7 +16,7 @@
 extends Control
 
 ## Display duration (seconds) before auto-dismiss. Set to 0 to disable auto-dismiss.
-@export var auto_dismiss_time: float = 8.0
+@export var auto_dismiss_time: float = 10.0
 
 ## Whether to show the character icon
 @export var show_icon: bool = true
@@ -28,9 +28,12 @@ extends Control
 @onready var message_label: RichTextLabel = get_node_or_null("%MessageLabel")
 @onready var character_icon: TextureRect = get_node_or_null("%CharacterIcon")
 @onready var dismiss_button: Button = get_node_or_null("%DismissButton")
+@onready var next_button: Button = get_node_or_null("%NextButton")
 
 ## Timer for auto-dismiss
 var dismiss_timer: Timer = null
+var _paused_time_left: float = 0.0
+var _is_hovering: bool = false
 
 ## Reference to Clippy controller
 var clippy: ClippyController = null
@@ -38,6 +41,10 @@ var clippy: ClippyController = null
 ## Current message priority (to prevent low-priority messages from overriding high-priority ones)
 var current_message_priority: int = ClippyEvent.Priority.LOW
 var is_showing_message: bool = false
+var _is_sequence_mode: bool = false
+
+## Signal for sequence navigation
+signal next_message_requested()
 
 func _ready() -> void:
 	DebugLogger.clippy("Initializing ClippyUI...")
@@ -62,6 +69,17 @@ func _ready() -> void:
 	else:
 		push_warning("[ClippyUI] Cannot connect dismiss button - button not found")
 	
+	# Setup next button
+	if next_button:
+		next_button.pressed.connect(_on_next_pressed)
+		next_button.visible = false  # Hidden by default
+	else:
+		DebugLogger.clippy("NextButton node not found (optional)")
+	
+	# Connect mouse signals for hover behavior
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
+
 	# Setup auto-dismiss timer
 	if auto_dismiss_time > 0:
 		dismiss_timer = Timer.new()
@@ -110,19 +128,23 @@ func _show_message(text: String, priority: int = ClippyEvent.Priority.NORMAL) ->
 	is_showing_message = true
 	
 	self.visible = true
-		
-		# Animate in
-	var tween = create_tween()
-	tween.set_ease(Tween.EASE_OUT)
-	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.tween_property(self, "modulate:a", 1.0, animation_duration)
-	DebugLogger.clippy("Panel animated in")
+	
+	# Choose animation based on priority
+	if priority >= ClippyEvent.Priority.HIGH:
+		_show_critical_popup()
+	else:
+		_show_normal_fade_in()
 	
 	# Start auto-dismiss timer
 	if dismiss_timer and auto_dismiss_time > 0:
 		dismiss_timer.stop()
-		dismiss_timer.start(auto_dismiss_time)
-		DebugLogger.clippy("Auto-dismiss timer started (%s s)", [auto_dismiss_time])
+		
+		if _is_hovering:
+			_paused_time_left = auto_dismiss_time
+			DebugLogger.clippy("Mouse hovering: Timer start deferred (%.2fs)", [auto_dismiss_time])
+		else:
+			dismiss_timer.start(auto_dismiss_time)
+			DebugLogger.clippy("Auto-dismiss timer started (%s s)", [auto_dismiss_time])
 
 ## Hide message with animation
 func _hide_message() -> void:
@@ -147,6 +169,13 @@ func _on_dismiss_pressed() -> void:
 		dismiss_timer.stop()
 	_hide_message()
 
+## Next button pressed (advance to next message in sequence)
+func _on_next_pressed() -> void:
+	# Don't hide, just signal that user wants next message
+	# The sequence handler will take care of showing the next one
+	next_message_requested.emit()
+	DebugLogger.clippy("Next message requested by user")
+
 ## Public method to manually show a message
 func show_custom_message(text: String) -> void:
 	_show_message(text)
@@ -156,6 +185,13 @@ func hide_current_message() -> void:
 	if dismiss_timer:
 		dismiss_timer.stop()
 	_hide_message()
+
+## Enable sequence mode (shows next button)
+func set_sequence_mode(enabled: bool) -> void:
+	_is_sequence_mode = enabled
+	if next_button:
+		next_button.visible = enabled
+	DebugLogger.clippy("Sequence mode: %s" % enabled)
 
 # ---------------------------------------------------------------------------
 # Priority Management
@@ -186,3 +222,51 @@ func _get_current_event_priority() -> int:
 	# For now, we'll use a signal or add a method to ClippyController
 	# As a fallback, return NORMAL
 	return ClippyEvent.Priority.NORMAL
+
+# ---------------------------------------------------------------------------
+# Mouse Interaction (Hover to Pause)
+# ---------------------------------------------------------------------------
+
+func _on_mouse_entered() -> void:
+	if dismiss_timer and not dismiss_timer.is_stopped():
+		_paused_time_left = dismiss_timer.time_left
+		dismiss_timer.stop()
+		DebugLogger.clippy("Mouse entered: Timer paused (%.2fs left)", [_paused_time_left])
+	_is_hovering = true
+
+func _on_mouse_exited() -> void:
+	if _paused_time_left > 0:
+		dismiss_timer.start(_paused_time_left)
+		DebugLogger.clippy("Mouse exited: Timer resumed (%.2fs)", [_paused_time_left])
+		_paused_time_left = 0.0
+	_is_hovering = false
+
+# ---------------------------------------------------------------------------
+# Animation Methods
+# ---------------------------------------------------------------------------
+
+## Normal fade-in animation for low/normal priority
+func _show_normal_fade_in() -> void:
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(self, "modulate:a", 1.0, animation_duration)
+	DebugLogger.clippy("Panel animated in (normal)")
+
+## Critical popup animation with red flashes for high/critical priority
+func _show_critical_popup() -> void:
+	# Instant popup (no fade)
+	self.modulate.a = 1.0
+	
+	# Create red flash effect
+	var flash_tween = create_tween()
+	flash_tween.set_loops(3)
+	
+	# Flash red color
+	var red_modulate = Color(1.5, 0.3, 0.3, 1.0)  # Bright red
+	var normal_modulate = Color(1.0, 1.0, 1.0, 1.0)  # Normal white
+	
+	flash_tween.tween_property(self, "modulate", red_modulate, 0.15)
+	flash_tween.tween_property(self, "modulate", normal_modulate, 0.15)
+	
+	DebugLogger.clippy("Panel animated in (CRITICAL with red flashes)")

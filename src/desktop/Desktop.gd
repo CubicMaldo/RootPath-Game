@@ -24,12 +24,15 @@ func _ready():
 	
 	# Create simple System Monitor UI
 	_create_system_monitor_ui()
+	
+	# Show Clippy intro if flag is set
+	_check_clippy_intro()
 
 func _create_system_monitor_ui() -> void:
 	var monitor_panel = PanelContainer.new()
 	monitor_panel.name = "SystemMonitorUI"
 	monitor_panel.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	monitor_panel.position = Vector2(-220, 20) # Offset from top right
+	monitor_panel.position = Vector2(-220, 40) # Offset from top right
 	monitor_panel.custom_minimum_size = Vector2(200, 80)
 	
 	var vbox = VBoxContainer.new()
@@ -217,6 +220,31 @@ func _on_game_over(_won: bool):
 	
 	# Tweenear la propiedad color para un fade-in
 	tween_game_over.tween_property(game_over_visuals, "color", target_color, 1)
+
+func _check_clippy_intro() -> void:
+	# Wait for scene to fully load
+	await get_tree().process_frame
+	await get_tree().process_frame
+	
+	if Global.should_show_clippy_intro:
+		Global.should_show_clippy_intro = false
+		
+		if Global.ClippyBridge != null:
+			_show_tutorial_sequence()
+
+func _show_tutorial_sequence() -> void:
+	var tutorial_messages = [
+		"Bienvenido a Safe TreeNet. Soy tu asistente del sistema. Te guiaré por los controles básicos.",
+		"En la esquina superior derecha ves tu capacidad del sistema. Cada app consume recursos. Si se satura, habrá consecuencias.",
+		"Abre el Mapa del Árbol para sincronizarte con las ramas de la red. Ahí eliges nodos y desbloqueas nuevas funciones.",
+		"Algunos nodos contienen protocolos de seguridad (minijuegos). Completa estos desafíos para avanzar y proteger la red."
+	]
+	
+	# Send tutorial sequence
+	await Global.ClippyBridge.notify_clippy_sequence(tutorial_messages, "tutorial", 11.0)
+	
+	# Final warning message (separate for different priority)
+	Global.ClippyBridge.notify_clippy("ADVERTENCIA: Los virus pueden infiltrarse en Safe TreeNet. Si detectas actividad sospechosa, elimínalos de inmediato o el sistema colapsará.", "warning")
 
 func _kill_tween_if_running(tween_ref: Tween) -> void:
 	if tween_ref and tween_ref.is_running():

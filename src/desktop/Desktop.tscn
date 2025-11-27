@@ -197,17 +197,6 @@ visible = false
 layout_mode = 2
 appStats = ExtResource("8_pwstr")
 
-[node name="AppPanelContainer" type="Control" parent="."]
-unique_name_in_owner = true
-layout_direction = 1
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
 [node name="Taskbar" type="Panel" parent="."]
 material = SubResource("ShaderMaterial_rvpx8")
 layout_mode = 1
@@ -256,18 +245,32 @@ script = ExtResource("9_77w8n")
 
 [node name="PopupMenu" type="PopupMenu" parent="Taskbar/MargenBar/TaskBar/MenuButton"]
 
+[node name="AppPanelContainer" type="Control" parent="."]
+unique_name_in_owner = true
+layout_direction = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 101
 
 [node name="ClippyPanel" parent="CanvasLayer" instance=ExtResource("13_kp3ny")]
-anchors_preset = 1
+anchors_preset = 6
 anchor_left = 1.0
+anchor_top = 0.5
 anchor_right = 1.0
-offset_left = -616.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 198.0
+anchor_bottom = 0.5
+offset_left = -600.0
+offset_top = -91.0
+offset_right = 0.0
+offset_bottom = 91.0
 grow_horizontal = 0
+grow_vertical = 2
 
 [node name="EndingScreen" type="ColorRect" parent="CanvasLayer"]
 visible = false

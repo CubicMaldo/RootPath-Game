@@ -1,7 +1,4 @@
-extends Control
-
-signal virus_cleared
-signal virus_failed
+extends BaseVirus
 
 # Configuración
 @export var popup_count: int = 5

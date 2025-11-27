@@ -18,6 +18,9 @@ extends Node
 ## Reference to ClippyController (set in _ready)
 var clippy: ClippyController = null
 
+## Queue for events that arrive before Clippy is ready
+var _event_queue: Array[ClippyEvent] = []
+
 ## Track which minigames have been opened (to avoid repeat messages)
 var opened_minigames: Dictionary = {} # {"game_type": true}
 
@@ -31,6 +34,14 @@ func _ready() -> void:
 	if has_node("/root/Clippy"):
 		clippy = get_node("/root/Clippy")
 		print("[ClippyBridge] ✓ Found Clippy autoload")
+		
+		# Flush queue
+		if not _event_queue.is_empty():
+			print("[ClippyBridge] Flushing %d queued events" % _event_queue.size())
+			for event in _event_queue:
+				_send_clippy_event(event)
+			_event_queue.clear()
+			
 		_connect_eventbus_signals()
 		print("[ClippyBridge] ✓ Connected to EventBus signals")
 		print("[ClippyBridge] Ready and listening for events")
@@ -78,13 +89,65 @@ func notify_clippy(message: String, type: String = "tutorial") -> void:
 			
 	_send_clippy_event(event)
 
+## Send a sequence of messages to Clippy (for tutorials)
+## @param messages: Array of message strings
+## @param type: Message type for all messages
+## @param delay: Delay between messages in seconds
+func notify_clippy_sequence(messages: Array, type: String = "tutorial", delay: float = 11.0) -> void:
+	# Get UI reference
+	var ui = get_tree().get_first_node_in_group("clippy_ui")
+	if not ui:
+		push_warning("[ClippyBridge] ClippyUI not found for sequence")
+		return
+	
+	# Enable sequence mode on UI
+	_set_ui_sequence_mode(true)
+	
+	for i in messages.size():
+		notify_clippy(messages[i], type)
+		if i < messages.size() - 1:  # Don't wait after last message
+			print("[ClippyBridge] Waiting for next message (%d/%d)" % [i + 1, messages.size()])
+			# Wait for either timer or next button
+			await _wait_for_next_or_timeout(ui, delay)
+			print("[ClippyBridge] Advancing to next message")
+	
+	# Disable sequence mode after last message
+	_set_ui_sequence_mode(false)
+
+## Wait for either next button press or timeout
+func _wait_for_next_or_timeout(ui: Node, delay: float) -> void:
+	var state := {"next_pressed": false}
+	
+	var on_next = func():
+		state.next_pressed = true
+	
+	if ui.has_signal("next_message_requested"):
+		ui.next_message_requested.connect(on_next, CONNECT_ONE_SHOT)
+	
+	var elapsed := 0.0
+	while elapsed < delay and not state.next_pressed:
+		await get_tree().process_frame
+		elapsed += get_tree().root.get_process_delta_time()
+	
+	# Cleanup connection if still connected
+	if ui.has_signal("next_message_requested") and ui.next_message_requested.is_connected(on_next):
+		ui.next_message_requested.disconnect(on_next)
+
+## Helper to control UI sequence mode
+func _set_ui_sequence_mode(enabled: bool) -> void:
+	# Find ClippyUI in the scene
+	var ui = get_tree().get_first_node_in_group("clippy_ui")
+	if ui and ui.has_method("set_sequence_mode"):
+		ui.set_sequence_mode(enabled)
+
 ## Send event to Clippy
 func _send_clippy_event(event: ClippyEvent) -> void:
 	if clippy != null:
 		print("[ClippyBridge] → Sending event: ", event.get_description())
 		clippy.handle_event(event)
 	else:
-		push_warning("[ClippyBridge] Cannot send event - Clippy is null")
+		print("[ClippyBridge] Queuing event (Clippy not ready): ", event.get_description())
+		_event_queue.append(event)
 
 # ============================================================================
 # EVENT HANDLERS - Navigation

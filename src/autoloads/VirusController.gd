@@ -125,12 +125,19 @@ func _setup_desktop_connection() -> void:
 	if desktop:
 		desktop_manager = desktop
 		print("✅ Desktop manager encontrado")
-	else:
-		push_warning("VirusController: No se encontró Desktop manager en la escena")
+	# Note: Desktop manager is not required for fullscreen viruses
+	# It's only needed for app-based viruses
 
 func trigger_app_infection(type: String = "") -> void:
 	if is_infected:
 		return
+	
+	# Check if desktop manager is available
+	if desktop_manager == null:
+		print("ℹ️ Desktop manager no disponible, usando virus fullscreen en su lugar")
+		trigger_infection(type)
+		return
+	
 	is_infected = true
 	current_virus_type = "app"
 	print("⚠️ SISTEMA INFECTADO (APP VIRUS) ⚠️")
@@ -139,11 +146,6 @@ func trigger_app_infection(type: String = "") -> void:
 	var virus_app_stats = _select_app_virus(type)
 	if not virus_app_stats:
 		push_warning("VirusController: No hay app virus disponibles")
-		is_infected = false
-		return
-	
-	if desktop_manager == null:
-		push_error("VirusController: desktop_manager no está configurado")
 		is_infected = false
 		return
 	
