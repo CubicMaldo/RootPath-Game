@@ -34,7 +34,6 @@ var total_levels: int = 0
 @onready var tiempo_label = $Panel/VBoxContainer/TopBar/TiempoLabel
 @onready var btn_permitir = $Panel/VBoxContainer/ButtonsContainer/BtnPermitir
 @onready var btn_bloquear = $Panel/VBoxContainer/ButtonsContainer/BtnBloquear
-@onready var btn_pista = $Panel/VBoxContainer/ButtonsContainer/BtnPista
 @onready var btn_siguiente = $Panel/VBoxContainer/ButtonsContainer/BtnSiguiente
 @onready var progress_bar = $Panel/VBoxContainer/ProgressContainer/ProgressBar
 @onready var timer_juego = $TimerJuego
@@ -88,6 +87,9 @@ func _ready():
 	_actualizar_estadisticas()
 	timer_juego.start()
 	_mostrar_bienvenida()
+	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("¡Bienvenido al Firewall! Analiza cada conexión. Si es sospechosa, ¡bloquéala!", "tutorial")
 
 func _mostrar_bienvenida():
 	resultado_label.text = "🛡️ ¡Defiende la red de amenazas!"
@@ -113,7 +115,6 @@ func _cargar_conexion():
 	
 	btn_permitir.disabled = false
 	btn_bloquear.disabled = false
-	btn_pista.disabled = false
 	
 	# Actualizar barra de progreso usando los intentos completados
 	progress_bar.max_value = max(1, connections.size())
@@ -143,13 +144,13 @@ func _actualizar_tiempo():
 func _on_btn_permitir_pressed() -> void:
 	if game_over:
 		return
-	_verificar_decision(false)  # false = permitir (no es sospechosa)
+	_verificar_decision(false) # false = permitir (no es sospechosa)
 	conexiones_permitidas += 1
 
 func _on_btn_bloquear_pressed() -> void:
 	if game_over:
 		return
-	_verificar_decision(true)  # true = bloquear (es sospechosa)
+	_verificar_decision(true) # true = bloquear (es sospechosa)
 	conexiones_bloqueadas += 1
 
 func _verificar_decision(decidio_bloquear: bool):
@@ -158,13 +159,10 @@ func _verificar_decision(decidio_bloquear: bool):
 	
 	btn_permitir.disabled = true
 	btn_bloquear.disabled = true
-	btn_pista.disabled = true
 	
 	if es_correcta:
 		aciertos += 1
 		var puntos_ganados = 100
-		if pistas_usadas == 0:
-			puntos_ganados += 50  # Bonus por no usar pistas
 		puntos += puntos_ganados
 		
 		resultado_label.text = "✅ ¡Correcto! +" + str(puntos_ganados) + " puntos"
@@ -175,6 +173,9 @@ func _verificar_decision(decidio_bloquear: bool):
 		else:
 			hint_label.text = "✓ Conexión legítima permitida"
 		hint_label.add_theme_color_override("font_color", Color(0, 0.8, 1))
+		
+		if Global.has_singleton("ClippyBridge"):
+			Global.ClippyBridge.notify_clippy("¡Bien hecho! Decisión correcta.", "success")
 	else:
 		vidas_restantes -= 1
 		resultado_label.text = "❌ ¡Error! Perdiste una vida"
@@ -183,6 +184,9 @@ func _verificar_decision(decidio_bloquear: bool):
 		hint_label.text = "💡 " + conexion.reason
 		hint_label.add_theme_color_override("font_color", Color(1, 0.5, 0))
 		
+		if Global.has_singleton("ClippyBridge"):
+			Global.ClippyBridge.notify_clippy("¡Error! " + conexion.hint, "warning")
+		
 		_actualizar_estadisticas()
 		
 		if vidas_restantes <= 0:
@@ -190,20 +194,10 @@ func _verificar_decision(decidio_bloquear: bool):
 			return
 	
 	_actualizar_estadisticas()
-	pistas_usadas = 0  # Resetear pistas para la siguiente conexión
+	pistas_usadas = 0 # Resetear pistas para la siguiente conexión
 	
 	btn_siguiente.visible = true
 	timer_resultado.start()
-
-func _on_btn_pista_pressed() -> void:
-	if game_over:
-		return
-	
-	var conexion: ConnectionResource = connections[conexion_actual_index]
-	hint_label.text = "💡 Pista: " + conexion.hint
-	hint_label.add_theme_color_override("font_color", Color(1, 1, 0))
-	pistas_usadas += 1
-	btn_pista.disabled = true
 
 func _on_btn_siguiente_pressed() -> void:
 	conexion_actual_index += 1
@@ -230,6 +224,9 @@ func _victoria_total():
 	]
 	hint_label.add_theme_color_override("font_color", Color(0, 1, 0))
 	connection_info_label.text = "🎉 ¡Has protegido la red exitosamente!"
+	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("¡Excelente! La red está segura gracias a ti.", "success")
 
 func _game_over():
 	_finalize_game(false)
@@ -240,7 +237,9 @@ func _game_over():
 	var precision := (float(aciertos) / float(analizadas)) * 100.0
 	hint_label.text = "Conexiones analizadas: %d | Precisión: %.1f%%" % [analizadas, precision]
 	connection_info_label.text = "⚠️ La red fue comprometida..."
-
+	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("La red ha caído. Inténtalo de nuevo.", "error")
 
 func _build_connections_for_current_level() -> Array[ConnectionResource]:
 	var result: Array[ConnectionResource] = []
@@ -304,7 +303,6 @@ func _finalize_game(win: bool) -> void:
 	game_over = true
 	btn_permitir.disabled = true
 	btn_bloquear.disabled = true
-	btn_pista.disabled = true
 	btn_siguiente.visible = false
 	timer_juego.stop()
 	progress_bar.value = connections.size()

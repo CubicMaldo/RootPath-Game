@@ -1,8 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bcqxfxlkk1o68"]
 
 [ext_resource type="Theme" uid="uid://dphug288uwuyp" path="res://src/minigames/Adivinanza/AdivinanzaTheme.tres" id="1_rrbmy"]
-[ext_resource type="Script" uid="uid://dr1bqlf1tggdu" path="res://src/minigames/password_cracker/password_cracker.gd" id="2_3drhf"]
-
+[ext_resource type="Script" uid="uid://cqm8x3y4z5a6b" path="res://src/minigames/Adivinanza/adivinanza.gd" id="2_script"]
 
 [node name="Adivinanza" type="Control"]
 layout_mode = 3
@@ -12,7 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_rrbmy")
-script = ExtResource("2_3drhf")
+script = ExtResource("2_script")
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -22,64 +21,64 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="Panel"]
-layout_mode = 0
-offset_left = 817.0
-offset_top = 135.0
-offset_right = 1074.0
-offset_bottom = 195.0
-theme_override_colors/font_color = Color(0.3529412, 1, 1, 1)
-text = "Adivinanza"
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+alignment = 1
 
-[node name="Label2" type="Label" parent="Panel"]
-layout_mode = 0
-offset_left = 462.0
-offset_top = 322.0
-offset_right = 1407.0
-offset_bottom = 425.0
-theme_override_font_sizes/font_size = 25
-text = "Aparentemente soy de Bancolombia, te envio correos pidiendo tu informacion bancaria y te ofrezco creidtos sospechosos"
+[node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 48
+text = "ENIGMA DE SEGURIDAD"
+horizontal_alignment = 1
+
+[node name="PreguntaLabel" type="Label" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Cargando enigma..."
+horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="LineEdit" type="LineEdit" parent="Panel"]
-layout_mode = 0
-offset_left = 775.0
-offset_top = 524.0
-offset_right = 1128.0
-offset_bottom = 592.0
-theme_override_colors/font_color = Color(0.59478486, 0.9459732, 0.9575884, 1)
-theme_override_font_sizes/font_size = 25
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 40
 
-[node name="Button" type="Button" parent="Panel"]
-layout_mode = 0
-offset_left = 1024.0
-offset_top = 703.0
-offset_right = 1325.0
-offset_bottom = 771.0
-theme_override_colors/icon_pressed_color = Color(1, 0.29411766, 1, 1)
-text = "Responder
-"
+[node name="LineEdit" type="LineEdit" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+placeholder_text = "Escribe tu respuesta aquí..."
+alignment = 1
 
-[node name="Label3" type="Label" parent="Panel"]
-layout_mode = 0
-offset_left = 835.0
-offset_top = 333.0
-offset_right = 2658.0
-offset_bottom = 1397.0
-vertical_alignment = 1
-autowrap_mode = 1
+[node name="Button" type="Button" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "RESPONDER"
+
+[node name="ResultadoLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
 
 [node name="Timer" type="Timer" parent="Panel"]
-wait_time = 2.5
+wait_time = 2.0
 one_shot = true
 
-[node name="Button2" type="Button" parent="Panel"]
-layout_mode = 0
-offset_left = 612.0
-offset_top = 701.0
-offset_right = 872.0
-offset_bottom = 769.0
-text = "salir"
-
-[connection signal="pressed" from="Panel/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="text_submitted" from="Panel/VBoxContainer/LineEdit" to="." method="_on_button_pressed"]
 [connection signal="timeout" from="Panel/Timer" to="." method="_on_timer_timeout"]

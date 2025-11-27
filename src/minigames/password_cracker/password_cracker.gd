@@ -3,7 +3,7 @@ extends Control
 ## Minijuego de ciberseguridad: Password Cracker - Versión Mejorada
 ## El jugador debe descifrar contraseñas de diferentes niveles usando pistas y análisis
 
-@export var level_database : PasswordLevelDatabase
+@export var level_database: PasswordLevelDatabase
 @export_range(0, 100, 1) var max_easy_levels: int = 3
 @export_range(0, 100, 1) var max_medium_levels: int = 3
 @export_range(0, 100, 1) var max_hard_levels: int = 3
@@ -36,7 +36,6 @@ var _rng := RandomNumberGenerator.new()
 @onready var timer_resultado = $Timer
 @onready var timer_juego = $TimerJuego
 @onready var timer_parpadeo = $TimerParpadeo
-@onready var btn_pista = $Panel/MarginContainer/VBoxContainer/HBoxContainer/BtnPista
 @onready var btn_enviar = $Panel/MarginContainer/VBoxContainer/InputContainer/BtnEnviar
 @onready var btn_analizar = $Panel/MarginContainer/VBoxContainer/InputContainer/BtnAnalizar
 @onready var btn_reiniciar = $Panel/MarginContainer/VBoxContainer/HBoxContainer/BtnReiniciar
@@ -73,6 +72,9 @@ func _ready():
 	
 	# Conectar Enter key para enviar
 	input_password.text_submitted.connect(_on_enter_pressed)
+	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("¡Hola! Descifra la contraseña. Usa 'Analizar' para ver similitudes.", "tutorial")
 
 func _mostrar_bienvenida():
 	label_resultado.text = "🎯 ¡Descifra las contraseñas!"
@@ -111,7 +113,6 @@ func _cargar_nivel(indice: int):
 	input_password.text = ""
 	input_password.editable = true
 	btn_enviar.disabled = false
-	btn_pista.disabled = false
 	btn_analizar.disabled = false
 	btn_analizar.text = "🔍 Analizar (" + str(analisis_disponibles) + ")"
 	similitud_label.text = "Similitud: --"
@@ -198,6 +199,9 @@ func _on_btn_analizar_pressed() -> void:
 		puntos += 10
 		_actualizar_estadisticas()
 		_mostrar_efecto_puntos("+10", Color(0, 1, 0.5))
+		
+		if Global.has_singleton("ClippyBridge"):
+			Global.ClippyBridge.notify_clippy("¡Vas por buen camino! La similitud es alta.", "success")
 
 func _calcular_similitud(intento: String, correcta: String) -> float:
 	var coincidencias: int = 0
@@ -267,6 +271,9 @@ func _password_correcta():
 	# Efecto de partículas/estrellas
 	_crear_efecto_victoria()
 	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("¡Contraseña descifrada! Excelente trabajo.", "success")
+	
 	# Animación de éxito
 	var tween = create_tween()
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
@@ -300,7 +307,7 @@ func _mostrar_efecto_puntos(texto: String, color: Color):
 	label_temp.queue_free()
 
 func _password_incorrecta():
-	combo_racha = 0  # Resetear combo al fallar
+	combo_racha = 0 # Resetear combo al fallar
 	intentos_restantes -= 1
 	_actualizar_intentos()
 	
@@ -312,6 +319,10 @@ func _password_incorrecta():
 			mensaje_extra = " ⚠️ ¡Cuidado!"
 		_mostrar_mensaje("❌ Contraseña incorrecta. Vidas: " + str(intentos_restantes) + mensaje_extra, Color(1, 0, 0))
 		
+		# Revelar pista automáticamente si falla mucho
+		if intentos_restantes == 3 and pistas_reveladas < pistas_actuales.size():
+			_revelar_pista_auto()
+		
 		# Efecto de sacudida en el input
 		var tween = create_tween()
 		var original_pos = input_password.position
@@ -322,6 +333,23 @@ func _password_incorrecta():
 		
 		# Efecto de parpadeo rojo en el panel
 		_efecto_error_panel()
+
+func _revelar_pista_auto():
+	if pistas_reveladas >= pistas_actuales.size():
+		return
+	
+	var pista_label = pistas_container.get_child(pistas_reveladas)
+	pista_label.text = "💡 " + pistas_actuales[pistas_reveladas]
+	pista_label.add_theme_color_override("font_color", Color(0.2, 0.8, 1))
+	
+	var tween = create_tween()
+	pista_label.modulate.a = 0
+	tween.tween_property(pista_label, "modulate:a", 1.0, 0.5)
+	
+	pistas_reveladas += 1
+	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("Te veo en problemas. Aquí tienes una pista: " + pistas_actuales[pistas_reveladas - 1], "hint")
 
 func _game_over():
 	_finalize_game(false)
@@ -338,6 +366,9 @@ func _game_over():
 	var tween = create_tween()
 	tween.tween_property($Panel, "modulate", Color(1, 0.5, 0.5), 0.3)
 	tween.tween_property($Panel, "modulate", Color(1, 1, 1), 0.3)
+	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("Has sido bloqueado. Inténtalo de nuevo.", "error")
 
 func _efecto_error_panel():
 	var tween = create_tween()
@@ -377,36 +408,14 @@ func _victoria_total():
 	tween.set_loops(3)
 	tween.tween_property(label_resultado, "modulate", Color(1, 1, 0), 0.3)
 	tween.tween_property(label_resultado, "modulate", Color(1, 1, 1), 0.3)
+	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("¡Increíble! Eres un maestro descifrador.", "success")
 
 func _mostrar_mensaje(mensaje: String, color: Color):
 	label_resultado.text = mensaje
 	label_resultado.add_theme_color_override("font_color", color)
 	timer_resultado.start()
-
-func _on_btn_pista_pressed() -> void:
-	if game_over or pistas_reveladas >= pistas_actuales.size():
-		return
-	
-	# Revelar la siguiente pista
-	var pista_label = pistas_container.get_child(pistas_reveladas)
-	pista_label.text = "💡 " + pistas_actuales[pistas_reveladas]
-	pista_label.add_theme_color_override("font_color", Color(0.2, 0.8, 1))
-	
-	# Animación de revelación
-	var tween = create_tween()
-	pista_label.modulate.a = 0
-	tween.tween_property(pista_label, "modulate:a", 1.0, 0.5)
-	
-	pistas_reveladas += 1
-	
-	# Penalización: reducir puntos por usar pista
-	puntos -= 25
-	_actualizar_estadisticas()
-	_mostrar_mensaje("⚠️ Pista revelada (-25 puntos)", Color(1, 0.8, 0))
-	
-	if pistas_reveladas >= pistas_actuales.size():
-		btn_pista.disabled = true
-		btn_pista.text = "Sin pistas"
 
 func _on_btn_reiniciar_pressed() -> void:
 	# Reiniciar todo el juego
@@ -520,7 +529,6 @@ func _finalize_game(win: bool) -> void:
 	game_over = true
 	timer_juego.stop()
 	btn_enviar.disabled = true
-	btn_pista.disabled = true
 	btn_analizar.disabled = true
 	input_password.editable = false
 	btn_reiniciar.visible = true

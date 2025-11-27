@@ -20,7 +20,6 @@ var emails: Array[EmailResource] = []
 
 @onready var btn_legitimo = $Panel/VBoxContainer/ButtonContainer/BtnLegitimo
 @onready var btn_phishing = $Panel/VBoxContainer/ButtonContainer/BtnPhishing
-@onready var btn_pista = $Panel/VBoxContainer/ButtonContainer/BtnPista
 @onready var btn_siguiente = $Panel/VBoxContainer/ButtonContainer/BtnSiguiente
 
 var email_actual_index: int = 0
@@ -28,8 +27,8 @@ var puntos: int = 0
 var vidas: int = 3
 var emails_completados: int = 0
 var total_emails: int
-@export var max_mails : int = 5
-var tiempo_restante: float = 600.0  # 10 minutos
+@export var max_mails: int = 5
+var tiempo_restante: float = 600.0 # 10 minutos
 var uso_pista: bool = false
 
 func _ready():
@@ -47,8 +46,10 @@ func _ready():
 	
 	btn_legitimo.pressed.connect(_on_legitimo_pressed)
 	btn_phishing.pressed.connect(_on_phishing_pressed)
-	btn_pista.pressed.connect(_on_pista_pressed)
 	btn_siguiente.pressed.connect(_on_siguiente_pressed)
+	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("¡Bienvenido! Analiza cada correo. Si ves algo sospechoso, márcalo como Phishing.", "tutorial")
 
 func _process(delta):
 	tiempo_restante -= delta
@@ -96,7 +97,6 @@ func mostrar_email_actual():
 	
 	btn_legitimo.disabled = false
 	btn_phishing.disabled = false
-	btn_pista.disabled = false
 
 func _on_legitimo_pressed():
 	verificar_respuesta(false)
@@ -110,22 +110,23 @@ func verificar_respuesta(es_phishing: bool):
 	
 	btn_legitimo.disabled = true
 	btn_phishing.disabled = true
-	btn_pista.disabled = true
 	
 	if respuesta_correcta:
 		var puntos_ganados = 100
-		if not uso_pista:
-			puntos_ganados += 50
-			resultado_label.text = "✅ ¡CORRECTO! +150 puntos (100 + 50 bonus sin pista)"
-		else:
-			resultado_label.text = "✅ ¡CORRECTO! +100 puntos"
+		resultado_label.text = "✅ ¡CORRECTO! +100 puntos"
 		
 		puntos += puntos_ganados
 		resultado_label.add_theme_color_override("font_color", Color.GREEN)
+		
+		if Global.has_singleton("ClippyBridge"):
+			Global.ClippyBridge.notify_clippy("¡Bien hecho! Has identificado correctamente el correo.", "success")
 	else:
 		vidas -= 1
 		resultado_label.text = "❌ INCORRECTO - Perdiste una vida"
 		resultado_label.add_theme_color_override("font_color", Color.RED)
+		
+		if Global.has_singleton("ClippyBridge"):
+			Global.ClippyBridge.notify_clippy("¡Cuidado! " + email.hint, "warning")
 		
 		if vidas <= 0:
 			game_over()
@@ -149,13 +150,6 @@ func mostrar_explicacion(email: EmailResource):
 	
 	resultado_label.text += explicacion
 
-func _on_pista_pressed():
-	var email: EmailResource = emails[email_actual_index]
-	hint_label.text = "💡 Pista: " + email.hint
-	hint_label.show()
-	uso_pista = true
-	btn_pista.disabled = true
-
 func _on_siguiente_pressed():
 	emails_completados += 1
 	email_actual_index += 1
@@ -175,6 +169,9 @@ func victoria():
 	resultado_label.show()
 	
 	ocultar_controles()
+	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("¡Felicidades! Has completado el entrenamiento de Phishing.", "success")
 	
 	await get_tree().create_timer(3.0).timeout
 	
@@ -196,6 +193,9 @@ func game_over():
 	
 	ocultar_controles()
 	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("Has fallado el entrenamiento. Inténtalo de nuevo.", "error")
+	
 	await get_tree().create_timer(3.0).timeout
 	
 	if Global.has_method("report_challenge_result"):
@@ -206,6 +206,5 @@ func game_over():
 func ocultar_controles():
 	btn_legitimo.hide()
 	btn_phishing.hide()
-	btn_pista.hide()
 	btn_siguiente.hide()
 	hint_label.hide()

@@ -13,6 +13,15 @@ grow_vertical = 2
 script = ExtResource("1")
 scan_database = ExtResource("2")
 
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.05, 0.09, 1)
+
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 8
@@ -26,6 +35,7 @@ offset_right = 550.0
 offset_bottom = 400.0
 grow_horizontal = 2
 grow_vertical = 2
+modulate = Color(0.12, 0.2, 0.26, 0.95)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
 layout_mode = 1
@@ -65,13 +75,14 @@ horizontal_alignment = 1
 
 [node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-text = "🔍 PORT SCANNER DEFENDER 🛡️"
+theme_override_font_sizes/font_size = 32
+text = "🕶️ NETWORK TRAFFIC ANALYZER"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Instrucciones" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-text = "Analiza cada actividad de red y determina si es LEGÍTIMA o MALICIOSA"
+text = "Analiza cada flujo y decide si mantienes o bloqueas el puerto"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer"]
@@ -126,7 +137,8 @@ layout_mode = 2
 
 [node name="HintLabel" type="Label" parent="Panel/VBoxContainer/HintContainer"]
 layout_mode = 2
-text = "💡 Pista aparecerá aquí"
+theme_override_font_sizes/font_size = 24
+text = "🤖 Clippy Feed"
 autowrap_mode = 3
 
 [node name="ResultadoLabel" type="Label" parent="Panel/VBoxContainer"]
@@ -148,10 +160,6 @@ text = "✅ Tráfico Legítimo"
 [node name="BtnMalicioso" type="Button" parent="Panel/VBoxContainer/ButtonContainer"]
 layout_mode = 2
 text = "🚨 Scan MALICIOSO"
-
-[node name="BtnPista" type="Button" parent="Panel/VBoxContainer/ButtonContainer"]
-layout_mode = 2
-text = "💡 Ver Pista"
 
 [node name="BtnSiguiente" type="Button" parent="Panel/VBoxContainer/ButtonContainer"]
 layout_mode = 2

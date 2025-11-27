@@ -149,11 +149,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "🚨 PHISHING Detectado"
 
-[node name="BtnPista" type="Button" parent="Panel/VBoxContainer/ButtonContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "💡 Ver Pista"
-
 [node name="BtnSiguiente" type="Button" parent="Panel/VBoxContainer/ButtonContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20

@@ -57,6 +57,9 @@ func _ready() -> void:
 	_cache_card_properties()
 	# 5. Configurar animaciones y posiciones iniciales
 	await _initial_setup_delay()
+	
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy("¡Bienvenido al detector de Phishing! Desliza a la IZQUIERDA si es seguro, y a la DERECHA si es una estafa.", "tutorial")
 
 func _setup_card_signals() -> void:
 	for c in %Cards.get_children():
@@ -350,6 +353,13 @@ func _finish_game() -> void:
 	## Finaliza el juego y emite estadísticas
 	game_finished.emit(current_score, correct_answers, incorrect_answers)
 	_report_challenge_result(_get_accurracy() >= 70.0)
+	
+	if Global.has_singleton("ClippyBridge"):
+		var accuracy = _get_accurracy()
+		if accuracy >= 70.0:
+			Global.ClippyBridge.notify_clippy("¡Excelente trabajo! Has filtrado la mayoría de las amenazas.", "success")
+		else:
+			Global.ClippyBridge.notify_clippy("Necesitas practicar más. Recuerda verificar el remitente y los enlaces.", "warning")
 
 func _get_accurracy() -> float:
 	var accuracy: float = 0.0

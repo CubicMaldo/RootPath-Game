@@ -17,11 +17,11 @@ var queries: Array[SQLQueryResource] = []
 @onready var tiempo_label = $Panel/VBoxContainer/TopBar/TiempoLabel
 @onready var btn_seguro = $Panel/VBoxContainer/ButtonsContainer/BtnSeguro
 @onready var btn_malicioso = $Panel/VBoxContainer/ButtonsContainer/BtnMalicioso
-@onready var btn_pista = $Panel/VBoxContainer/ButtonsContainer/BtnPista
 @onready var btn_siguiente = $Panel/VBoxContainer/ButtonsContainer/BtnSiguiente
 @onready var progress_bar = $Panel/VBoxContainer/ProgressContainer/ProgressBar
 @onready var timer_juego = $TimerJuego
 @onready var timer_resultado = $TimerResultado
+@onready var panel = $Panel
 
 var consulta_actual_index: int = 0
 var vidas_restantes: int = 3
@@ -29,10 +29,13 @@ var vidas_maximas: int = 3
 var puntos: int = 0
 var tiempo_transcurrido: float = 0.0
 var game_over: bool = false
-var pistas_usadas: int = 0
 var ataques_bloqueados: int = 0
 var consultas_seguras_permitidas: int = 0
 var aciertos: int = 0
+var clippy_hint_active: bool = false
+var fail_streak: int = 0
+const IDLE_HINT_TIME := 18.0
+var idle_timer: Timer
 
 func _ready():
 	resultado_label.text = ""
@@ -49,6 +52,33 @@ func _ready():
 	_actualizar_estadisticas()
 	timer_juego.start()
 	_mostrar_bienvenida()
+	
+	idle_timer = Timer.new()
+	idle_timer.wait_time = IDLE_HINT_TIME
+	idle_timer.one_shot = true
+	idle_timer.timeout.connect(_on_idle_timeout)
+	add_child(idle_timer)
+	_reset_idle_timer()
+	_notify_clippy("Bienvenido a la consola de base de datos. Clasifica cada input y evita inyecciones.", "tutorial")
+
+func _notify_clippy(message: String, tone: String = "info") -> void:
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy(message, tone)
+
+func _reset_idle_timer() -> void:
+	if idle_timer == null:
+		return
+	idle_timer.stop()
+	idle_timer.start()
+
+func _on_idle_timeout() -> void:
+	if clippy_hint_active or game_over:
+		return
+	if consulta_actual_index >= queries.size():
+		return
+	var consulta: SQLQueryResource = queries[consulta_actual_index]
+	var mensaje = "Revisa la consulta base y compárala con el input '%s'." % consulta.get_display_text()
+	_deliver_hint(mensaje, false)
 
 func _mostrar_bienvenida():
 	resultado_label.text = "🛡️ ¡Protege la base de datos!"
@@ -78,12 +108,15 @@ func _cargar_consulta():
 	# Mostrar la consulta SQL resultante
 	sql_preview.text = "SQL Resultante:\n" + consulta.get_full_query()
 	
-	hint_label.text = ""
+	_clear_hint_feed()
 	resultado_label.text = ""
 	
 	btn_seguro.disabled = false
 	btn_malicioso.disabled = false
-	btn_pista.disabled = false
+	clippy_hint_active = false
+	fail_streak = 0
+	_reset_idle_timer()
+	_announce_query(consulta)
 	
 	# Actualizar barra de progreso
 	progress_bar.max_value = queries.size()
@@ -110,12 +143,14 @@ func _actualizar_tiempo():
 func _on_btn_seguro_pressed() -> void:
 	if game_over:
 		return
+	_reset_idle_timer()
 	_verificar_decision(false)  # false = consulta segura
 	consultas_seguras_permitidas += 1
 
 func _on_btn_malicioso_pressed() -> void:
 	if game_over:
 		return
+	_reset_idle_timer()
 	_verificar_decision(true)  # true = ataque SQL injection
 	ataques_bloqueados += 1
 
@@ -125,32 +160,45 @@ func _verificar_decision(decidio_es_malicioso: bool):
 	
 	btn_seguro.disabled = true
 	btn_malicioso.disabled = true
-	btn_pista.disabled = true
 	
 	if es_correcta:
 		aciertos += 1
 		var puntos_ganados = 150
-		if pistas_usadas == 0:
-			puntos_ganados += 75  # Bonus por no usar pistas
+		if not clippy_hint_active:
+			puntos_ganados += 75  # Bonus por no pedir ayuda
 		puntos += puntos_ganados
 		
 		resultado_label.text = "✅ ¡Correcto! +" + str(puntos_ganados) + " puntos"
 		resultado_label.add_theme_color_override("font_color", Color(0, 1, 0))
+		_flash_panel(Color(0.2, 0.9, 0.5))
+		fail_streak = 0
+		clippy_hint_active = false
 		
+		var success_text = ""
+		var success_color = Color(0.3, 1.0, 0.9)
 		if consulta.is_malicious:
-			hint_label.text = "🚨 Tipo de ataque: " + consulta.attack_type + "\n" + consulta.explanation
+			success_text = "🚨 Ataque bloqueado: %s\n%s" % [consulta.attack_type, consulta.explanation]
+			success_color = Color(1, 0.75, 0.3)
 		else:
-			hint_label.text = "✓ Consulta legítima permitida correctamente\n" + consulta.explanation
-		hint_label.add_theme_color_override("font_color", Color(0, 0.8, 1))
+			success_text = "🟢 Consulta permitida correctamente\n%s" % consulta.explanation
+		_set_hint_feed(success_text, success_color)
+		var success_tone = "success" if consulta.is_malicious else "info"
+		_notify_clippy(success_text, success_tone)
 	else:
 		vidas_restantes -= 1
 		resultado_label.text = "❌ ¡Error! Perdiste una vida"
 		resultado_label.add_theme_color_override("font_color", Color(1, 0, 0))
 		
-		hint_label.text = "💡 " + consulta.explanation
+		var fail_text = "💡 " + consulta.explanation
 		if consulta.is_malicious:
-			hint_label.text += "\n🚨 Era un ataque: " + consulta.attack_type
-		hint_label.add_theme_color_override("font_color", Color(1, 0.5, 0))
+			fail_text += "\n🚨 Era un ataque: " + consulta.attack_type
+		_set_hint_feed(fail_text, Color(1, 0.6, 0.2))
+		fail_streak += 1
+		_flash_panel(Color(0.9, 0.25, 0.25))
+		_shake_interface()
+		_notify_clippy(fail_text, "warning")
+		if fail_streak == 2:
+			_deliver_hint("Pista: " + consulta.hint, true)
 		
 		_actualizar_estadisticas()
 		
@@ -159,22 +207,12 @@ func _verificar_decision(decidio_es_malicioso: bool):
 			return
 	
 	_actualizar_estadisticas()
-	pistas_usadas = 0  # Resetear pistas para la siguiente consulta
 	
 	btn_siguiente.visible = true
 	timer_resultado.start()
 
-func _on_btn_pista_pressed() -> void:
-	if game_over:
-		return
-	
-	var consulta: SQLQueryResource = queries[consulta_actual_index]
-	hint_label.text = "💡 Pista: " + consulta.hint
-	hint_label.add_theme_color_override("font_color", Color(1, 1, 0))
-	pistas_usadas += 1
-	btn_pista.disabled = true
-
 func _on_btn_siguiente_pressed() -> void:
+	_reset_idle_timer()
 	consulta_actual_index += 1
 	btn_siguiente.visible = false
 	_cargar_consulta()
@@ -183,25 +221,69 @@ func _on_timer_resultado_timeout() -> void:
 	if not game_over and btn_siguiente.visible:
 		_on_btn_siguiente_pressed()
 
+func _announce_query(consulta: SQLQueryResource) -> void:
+	var resumen = "Consulta %d/%d | Input '%s'" % [
+		consulta_actual_index + 1,
+		queries.size(),
+		consulta.get_display_text()
+	]
+	_notify_clippy(resumen + ". Evalúa si el input altera la lógica SQL.", "info")
+	_set_hint_feed("Terminal activo: %s" % consulta.query_text)
+
+func _deliver_hint(texto: String, urgent: bool) -> void:
+	var contenido = texto.strip_edges()
+	if contenido == "":
+		contenido = "Busca operadores como '--', 'OR 1=1' o UNION no autorizados."
+	var tone = "warning" if urgent else "info"
+	var feed_color = Color(1, 0.6, 0.3) if urgent else Color(0.3, 1.0, 0.9)
+	_notify_clippy(contenido, tone)
+	_set_hint_feed("🤖 Clippy: " + contenido, feed_color)
+	clippy_hint_active = true
+
+func _set_hint_feed(text: String, color: Color = Color(0.2, 0.9, 1.0)) -> void:
+	hint_label.text = text
+	hint_label.add_theme_color_override("font_color", color)
+	hint_label.show()
+
+func _clear_hint_feed() -> void:
+	hint_label.text = ""
+	hint_label.hide()
+
+func _flash_panel(color: Color, duration := 0.35) -> void:
+	if panel == null:
+		return
+	var tween = create_tween()
+	tween.tween_property(panel, "modulate", color, duration * 0.4)
+	tween.tween_property(panel, "modulate", Color(1, 1, 1), duration * 0.6)
+
+func _shake_interface(intensity := 10.0, duration := 0.25) -> void:
+	var original_position = position
+	var tween = create_tween()
+	tween.tween_property(self, "position", original_position + Vector2(intensity, 0), duration * 0.33)
+	tween.tween_property(self, "position", original_position - Vector2(intensity, 0), duration * 0.33)
+	tween.tween_property(self, "position", original_position, duration * 0.34)
+	tween.finished.connect(func(): position = original_position)
+
 func _victoria_total():
 	game_over = true
 	btn_seguro.disabled = true
 	btn_malicioso.disabled = true
-	btn_pista.disabled = true
 	btn_siguiente.visible = false
 	timer_juego.stop()
+	if idle_timer:
+		idle_timer.stop()
+	_flash_panel(Color(0.3, 1.0, 0.8), 0.6)
 	
 	var precision = float(aciertos) / float(queries.size()) * 100
 	
 	resultado_label.text = "🏆 ¡BASE DE DATOS PROTEGIDA!"
 	resultado_label.add_theme_color_override("font_color", Color(1, 0.8, 0))
 	
-	hint_label.text = "Precisión: %.1f%% | Puntos: %d | Ataques bloqueados: %d" % [
-		precision, 
+	_set_hint_feed("Precisión: %.1f%% | Puntos: %d | Ataques bloqueados: %d" % [
+		precision,
 		puntos,
 		ataques_bloqueados
-	]
-	hint_label.add_theme_color_override("font_color", Color(0, 1, 0))
+	], Color(0.4, 1.0, 0.6))
 	
 	query_display.text = "¡Felicitaciones!"
 	input_display.text = "Has demostrado ser un excelente defensor contra SQL Injection"
@@ -210,24 +292,29 @@ func _victoria_total():
 	# Reportar victoria al sistema global
 	if Global.has_method("report_challenge_result"):
 		Global.report_challenge_result(true)
+	_notify_clippy("¡Base blindada! Tus decisiones bloquearon todas las inyecciones.", "success")
 
 func _game_over():
 	game_over = true
 	btn_seguro.disabled = true
 	btn_malicioso.disabled = true
-	btn_pista.disabled = true
 	btn_siguiente.visible = false
 	timer_juego.stop()
+	if idle_timer:
+		idle_timer.stop()
+	_flash_panel(Color(1.0, 0.35, 0.35), 0.5)
+	_shake_interface(14.0, 0.35)
 	
 	resultado_label.text = "💀 GAME OVER"
 	resultado_label.add_theme_color_override("font_color", Color(1, 0, 0))
 	
-	var precision = float(aciertos) / float(consulta_actual_index) * 100
-	hint_label.text = "Consultas analizadas: %d | Precisión: %.1f%% | Ataques bloqueados: %d" % [
-		consulta_actual_index, 
+	var total_analizadas = max(consulta_actual_index, 1)
+	var precision = float(aciertos) / float(total_analizadas) * 100
+	_set_hint_feed("Consultas analizadas: %d | Precisión: %.1f%% | Ataques bloqueados: %d" % [
+		total_analizadas,
 		precision,
 		ataques_bloqueados
-	]
+	], Color(1, 0.6, 0.3))
 	
 	query_display.text = "⚠️ La base de datos fue comprometida"
 	input_display.text = "Los atacantes lograron ejecutar código SQL malicioso"
@@ -236,3 +323,4 @@ func _game_over():
 	# Reportar derrota al sistema global
 	if Global.has_method("report_challenge_result"):
 		Global.report_challenge_result(false)
+	_notify_clippy("El servidor cayó. Analiza los operadores sospechosos antes del próximo intento.", "warning")

@@ -15,6 +15,7 @@ extends Control
 @onready var btn_siguiente = $MarginContainer/Panel/VBoxContainer/ButtonContainer/BtnSiguiente
 @onready var challenge_label = $MarginContainer/Panel/VBoxContainer/ChallengeContainer/ChallengeLabel
 @onready var resultado_label = $MarginContainer/Panel/VBoxContainer/ResultadoContainer/ResultadoLabel
+@onready var panel = $MarginContainer/Panel
 
 var nivel_actual: int = 1
 var puntos_totales: int = 0
@@ -36,6 +37,13 @@ var palabras_debiles = [
 	"iloveyou", "password1", "123123", "12345678"
 ]
 
+const IDLE_HINT_TIME := 18.0
+
+var idle_timer: Timer
+var last_strength_tier: String = ""
+var idle_hint_sent: bool = false
+var fail_streak: int = 0
+
 func _ready():
 	btn_check.pressed.connect(_on_check_pressed)
 	btn_generate.pressed.connect(_on_generate_pressed)
@@ -48,6 +56,37 @@ func _ready():
 	actualizar_ui()
 	mostrar_desafio_actual()
 	mostrar_tips_generales()
+	
+	idle_timer = Timer.new()
+	idle_timer.wait_time = IDLE_HINT_TIME
+	idle_timer.one_shot = true
+	idle_timer.timeout.connect(_on_idle_timeout)
+	add_child(idle_timer)
+	_reset_idle_timer()
+	
+	_notify_clippy("¡Bienvenido al Entrenador de Contraseñas! Aprende a crear claves invencibles.", "tutorial")
+
+func _notify_clippy(message: String, tone: String = "info") -> void:
+	if Global.has_singleton("ClippyBridge"):
+		Global.ClippyBridge.notify_clippy(message, tone)
+
+func _reset_idle_timer():
+	if idle_timer == null:
+		return
+	idle_timer.stop()
+	idle_timer.start()
+	idle_hint_sent = false
+
+func _on_idle_timeout():
+	if idle_hint_sent:
+		return
+	var mensaje = ""
+	if password_input.text.strip_edges().is_empty():
+		mensaje = "Empieza a escribir tu contraseña y mira cómo reacciona el analizador."
+	else:
+		mensaje = "Recuerda el desafío activo y ajusta tu contraseña para cumplirlo."
+	_notify_clippy(mensaje, "info")
+	idle_hint_sent = true
 
 func actualizar_ui():
 	score_label.text = "⭐ Puntos: %d" % puntos_totales
@@ -66,9 +105,14 @@ func mostrar_desafio_actual():
 	btn_siguiente.hide()
 	btn_check.disabled = false
 	actualizar_analisis("")
+	_reset_idle_timer()
+	fail_streak = 0
+	
+	_notify_clippy("Nuevo desafío: " + desafio["objetivo"], "info")
 
 func _on_password_changed(new_text: String):
 	actualizar_analisis(new_text)
+	_reset_idle_timer()
 
 func actualizar_analisis(password: String):
 	if password.length() == 0:
@@ -76,33 +120,68 @@ func actualizar_analisis(password: String):
 		strength_label.text = "Escribe una contraseña..."
 		strength_label.add_theme_color_override("font_color", Color.GRAY)
 		limpiar_feedback()
+		last_strength_tier = ""
 		return
 	
 	var score = calcular_puntuacion(password)
 	strength_bar.value = score
 	
 	# Actualizar etiqueta de fortaleza
+	var tier := ""
 	if score < 30:
 		strength_label.text = "MUY DÉBIL 😱"
 		strength_label.add_theme_color_override("font_color", Color.RED)
+		tier = "muy_debil"
 	elif score < 50:
 		strength_label.text = "DÉBIL 😟"
 		strength_label.add_theme_color_override("font_color", Color.ORANGE)
+		tier = "debil"
 	elif score < 70:
 		strength_label.text = "REGULAR 😐"
 		strength_label.add_theme_color_override("font_color", Color.YELLOW)
+		tier = "regular"
 	elif score < 85:
 		strength_label.text = "BUENA 😊"
 		strength_label.add_theme_color_override("font_color", Color.GREEN_YELLOW)
+		tier = "buena"
 	elif score < 100:
 		strength_label.text = "FUERTE 💪"
 		strength_label.add_theme_color_override("font_color", Color.GREEN)
+		tier = "fuerte"
 	else:
 		strength_label.text = "EXCELENTE! 🔥"
 		strength_label.add_theme_color_override("font_color", Color.GOLD)
+		tier = "excelente"
 	
 	# Mostrar feedback en tiempo real
 	mostrar_feedback(password, score)
+	_react_to_strength(tier, score, password)
+
+func _react_to_strength(tier: String, _score: int, password: String) -> void:
+	if tier == "" or last_strength_tier == tier:
+		return
+	var message := ""
+	var tone := "info"
+	match tier:
+		"muy_debil":
+			message = "¡Demasiado débil! Esa clave solo tiene %d caracteres." % password.length()
+			tone = "warning"
+		"debil":
+			message = "Añade más longitud o símbolos para dificultar ataques."
+			tone = "warning"
+		"regular":
+			message = "Vas por buen camino, mezcla más caracteres para subir de nivel."
+		"buena":
+			message = "Ya se siente sólida, prueba agregando símbolos extra."
+		"fuerte":
+			message = "¡Fortaleza alta! Unos cuantos caracteres más y será perfecta."
+		"excelente":
+			message = "🔥 Contraseña blindada. Perfecta para este desafío."
+			tone = "success"
+		_:
+			message = "Sigue ajustando la contraseña para mejorar la puntuación."
+	_notify_clippy(message, tone)
+	last_strength_tier = tier
 
 func calcular_puntuacion(password: String) -> int:
 	var score = 0
@@ -175,7 +254,7 @@ func tiene_secuencia_repetitiva(text: String) -> bool:
 		return false
 	
 	for i in range(text.length() - 2):
-		if text[i] == text[i+1] and text[i] == text[i+2]:
+		if text[i] == text[i + 1] and text[i] == text[i + 2]:
 			return true
 	return false
 
@@ -259,11 +338,12 @@ func mostrar_tips_generales():
 	for tip in tips:
 		var label = Label.new()
 		label.text = tip
-		label.add_theme_font_size_override("",28)
+		label.add_theme_font_size_override("", 28)
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD
 		tips_container.add_child(label)
 
 func _on_check_pressed():
+	_reset_idle_timer()
 	var password = password_input.text
 	var score = calcular_puntuacion(password)
 	var desafio = desafios[nivel_actual - 1]
@@ -288,14 +368,20 @@ func _on_check_pressed():
 		btn_siguiente.show()
 		
 		actualizar_ui()
+		fail_streak = 0
+		_flash_panel(Color(0.2, 0.9, 0.5))
+		_notify_clippy("¡Excelente! Has superado el desafío.", "success")
 	else:
 		resultado_label.text = "😕 Casi lo logras...\n\n"
 		resultado_label.text += "Puntuación: %d/100\n" % score
 		resultado_label.text += "Necesitas: %d puntos mínimo\n\n" % desafio["min_score"]
 		resultado_label.text += "💡 Sugerencias:\n"
-		resultado_label.text += obtener_sugerencias(password, score)
-		resultado_label.add_theme_color_override("font_color", Color.ORANGE)
-		resultado_label.show()
+		fail_streak += 1
+		_flash_panel(Color(0.9, 0.25, 0.25))
+		_shake_interface()
+		_notify_clippy("Aún no es suficiente. Revisa las sugerencias.", "warning")
+		if fail_streak == 2:
+			_notify_clippy("Necesitas reforzar la contraseña: añade longitud y símbolos para superar el desafío.", "warning")
 
 func obtener_analisis_detallado(password: String, _score: int) -> String:
 	var analisis = ""
@@ -352,7 +438,24 @@ func obtener_sugerencias(password: String, _score: int) -> String:
 	
 	return sugerencias
 
+func _flash_panel(color: Color, duration := 0.35) -> void:
+	if panel == null:
+		return
+	var tween = create_tween()
+	panel.modulate = Color(1, 1, 1)
+	tween.tween_property(panel, "modulate", color, duration * 0.4)
+	tween.tween_property(panel, "modulate", Color(1, 1, 1), duration * 0.6)
+
+func _shake_interface(intensity := 12.0, duration := 0.3) -> void:
+	var original_position = position
+	var tween = create_tween()
+	tween.tween_property(self, "position", original_position + Vector2(intensity, -intensity), duration * 0.33)
+	tween.tween_property(self, "position", original_position - Vector2(intensity, intensity), duration * 0.33)
+	tween.tween_property(self, "position", original_position, duration * 0.34)
+	tween.finished.connect(func(): position = original_position)
+
 func _on_generate_pressed():
+	_reset_idle_timer()
 	# Generar contraseña segura de ejemplo
 	var chars_mayus = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	var chars_minus = "abcdefghijklmnopqrstuvwxyz"
@@ -381,8 +484,10 @@ func _on_generate_pressed():
 	
 	password_input.text = password
 	actualizar_analisis(password)
+	_notify_clippy("He generado un ejemplo seguro para ti.", "info")
 
 func _on_siguiente_pressed():
+	_reset_idle_timer()
 	nivel_actual += 1
 	if nivel_actual > desafios.size():
 		victoria()
@@ -390,6 +495,7 @@ func _on_siguiente_pressed():
 		mostrar_desafio_actual()
 
 func victoria():
+	_flash_panel(Color(0.3, 1.0, 0.8), 0.6)
 	resultado_label.text = "🏆 ¡ENTRENAMIENTO COMPLETADO! 🏆\n\n"
 	resultado_label.text += "Has dominado el arte de las contraseñas seguras\n\n"
 	resultado_label.text += "📊 Estadísticas finales:\n"
@@ -410,6 +516,8 @@ func victoria():
 	btn_generate.hide()
 	btn_siguiente.hide()
 	challenge_label.hide()
+	
+	_notify_clippy("¡Felicidades! Eres un experto en seguridad de contraseñas.", "success")
 	
 	await get_tree().create_timer(1.5).timeout
 	
