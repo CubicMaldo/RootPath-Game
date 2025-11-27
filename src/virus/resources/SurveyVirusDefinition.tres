@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="VirusDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/virus/resources/VirusDefinition.gd" id="1"]
+[ext_resource type="Resource" path="res://src/desktop/resources/SurveyVirus.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+identifier = "survey"
+display_name = "Survey Virus"
+category = 1
+app_stats = ExtResource("2")
+spawn_weight = 0.8
+min_failures = 0
+max_failures = 0
+base_time_limit = 0.0
+alert_message = "Encuesta sospechosa solicita datos personales."
+clippy_hint = "Siempre elige la opción que evita compartir información privada."
+monitor_spike = 10.0
+accent_color = Color(0.4, 0.73, 0.42, 1)
+parameter_configs = []

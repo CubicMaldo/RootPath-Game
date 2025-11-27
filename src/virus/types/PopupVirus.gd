@@ -1,7 +1,4 @@
-extends Control
-
-signal virus_cleared
-signal virus_failed
+extends BaseVirus
 
 # Configuración
 @export var popup_count: int = 5
@@ -27,6 +24,9 @@ func _ready() -> void:
 	timer.timeout.connect(_on_timer_timeout)
 
 func start_infection() -> void:
+	time_limit = get_config_value("time_limit", time_limit)
+	popup_count = int(get_config_value("popup_count", popup_count))
+	timer.wait_time = time_limit
 	show()
 	is_active = true
 	active_popups = 0
@@ -83,10 +83,9 @@ func _on_popup_closed(popup: Button) -> void:
 func _complete_infection() -> void:
 	is_active = false
 	timer.stop()
-	virus_cleared.emit()
-	queue_free()
+	_on_virus_cleared()
 
 func _on_timer_timeout() -> void:
 	if is_active:
-		virus_failed.emit()
+		_on_virus_failed()
 		# No cerramos automáticamente, dejamos que el VirusController decida

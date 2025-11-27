@@ -1,12 +1,9 @@
-extends Control
+extends BaseVirus
 
 class_name FakeUpdateVirus
 
 ## Virus que simula una actualización falsa del sistema
 ## Requiere que el usuario cancele antes de que se "instale"
-
-signal virus_cleared
-signal virus_failed
 
 @onready var progress_bar = $VBoxContainer/ProgressBar
 @onready var status_label = $VBoxContainer/StatusLabel
@@ -25,6 +22,7 @@ func _ready():
 	timer.timeout.connect(_on_timer_timeout)
 
 func start_infection() -> void:
+	progress_speed = get_config_value("progress_speed", progress_speed)
 	is_active = true
 	progress = 0.0
 	status_label.text = "Descargando actualización crítica..."
@@ -57,7 +55,7 @@ func _on_cancel_pressed():
 	status_label.text = "✅ ACTUALIZACIÓN FALSA DETENIDA"
 	status_label.modulate = Color(0, 1, 0)
 	await get_tree().create_timer(1.0).timeout
-	virus_cleared.emit()
+	_on_virus_cleared()
 
 func _on_install_pressed():
 	# Instalar acelera el virus
@@ -69,7 +67,7 @@ func _on_install_complete():
 	status_label.text = "❌ MALWARE INSTALADO"
 	status_label.modulate = Color(1, 0, 0)
 	await get_tree().create_timer(1.0).timeout
-	virus_failed.emit()
+	_on_virus_failed()
 
 func _on_timer_timeout():
 	# Cada segundo, pequeño incremento extra

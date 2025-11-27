@@ -1,11 +1,8 @@
-extends Control
+extends BaseVirus
 
-class_name SurveyVirusclass_nameSurveyVirus
+class_name SurveyVirus
 
 ## Virus que presenta encuestas engañosas para recopilar información
-
-signal virus_cleared
-signal virus_failed
 
 @onready var question_label = $VBoxContainer/QuestionLabel
 @onready var options_container = $VBoxContainer/OptionsContainer
@@ -89,7 +86,7 @@ func _on_submit_pressed():
 		question_label.modulate = Color(1, 0, 0)
 		progress_label.text = "Nunca compartas información personal en encuestas sospechosas"
 		await get_tree().create_timer(2.0).timeout
-		virus_failed.emit()
+		_on_virus_failed()
 
 func _complete_survey():
 	question_label.text = "✅ ENCUESTA RECHAZADA CORRECTAMENTE"
@@ -97,4 +94,4 @@ func _complete_survey():
 	progress_label.text = "¡Bien hecho! Protegiste tu información personal"
 	submit_button.visible = false
 	await get_tree().create_timer(2.0).timeout
-	virus_cleared.emit()
+	_on_virus_cleared()

@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="VirusDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://src/virus/resources/VirusDefinition.gd" id="1"]
+[ext_resource type="PackedScene" path="res://src/virus/types/GlitchVirus.tscn" id="2"]
+[ext_resource type="Script" path="res://src/virus/resources/VirusParameterConfig.gd" id="3"]
+
+[sub_resource type="Resource" id="1_param" script=ExtResource("3")]
+property_name = "time_limit"
+scaling_mode = 1
+base_value = 15.0
+per_level_delta = -1.5
+min_value = 6.0
+max_value = 30.0
+apply_as_integer = false
+
+[sub_resource type="Resource" id="2_param" script=ExtResource("3")]
+property_name = "total_fragments"
+scaling_mode = 1
+base_value = 5.0
+per_level_delta = 1.0
+min_value = 5.0
+max_value = 9.0
+apply_as_integer = true
+
+[resource]
+script = ExtResource("1")
+identifier = "glitch"
+display_name = "Glitch Virus"
+category = 0
+virus_scene = ExtResource("2")
+spawn_weight = 1.0
+min_failures = 0
+max_failures = 0
+base_time_limit = 15.0
+alert_message = "Los fragmentos del sistema están fuera de orden."
+clippy_hint = "Arrastra cada bloque al slot con el mismo número para restaurar la secuencia."
+monitor_spike = 18.0
+accent_color = Color(0.31, 0.76, 0.97, 1)
+parameter_configs = [SubResource("1_param"), SubResource("2_param")]
