@@ -1,6 +1,8 @@
 class_name TreeAppController
 extends Node
 
+const ClippyEventResource := preload("res://src/clippy/events/ClippyEvent.gd")
+
 ## Orchestrates the different systems without coupling them together
 ## This is the ONLY place where systems interact
 
@@ -21,6 +23,7 @@ var resource_service: ResourceService
 
 var score: int = 0
 var _last_completed_node: TreeNode = null # Nueva variable para tracking
+var _final_lore_sent: bool = false
 
 func _init():
 	navigator = PlayerNavigator.new()
@@ -127,6 +130,7 @@ func _handle_navigation() -> void:
 	visibility.reveal_children(current)
 	# Check for game end
 	if current.tipo == Arbol.NodosJuego.FINAL:
+		_broadcast_finale_lore()
 		EventBus.game_over.emit(true)
 		game_over.emit(true)
 		print("[TreeAppController] Nodo FINAL alcanzado, juego terminado.")
@@ -233,6 +237,7 @@ func report_challenge_result(win: bool) -> void:
 func _on_challenge_completed(node: TreeNode, win: bool) -> void:
 	print("[TreeAppController] Challenge completed callback: win=%s" % [win])
 	_last_completed_node = node
+	_broadcast_challenge_lore(node, win)
 	if game_launcher != null and game_launcher.has_method("on_challenge_resolved"):
 		print("[TreeAppController] Notificando GameLauncher de resolución")
 		game_launcher.on_challenge_resolved(node, win)
@@ -290,3 +295,46 @@ func _launch_node_app(node: TreeNode) -> void:
 		if challenge_state.start_challenge(node):
 			EventBus.challenge_started.emit(node)
 			challenge_started.emit(node)
+
+func _broadcast_challenge_lore(node: TreeNode, win: bool) -> void:
+	if node == null:
+		return
+	var label := _node_display_label(node)
+	var context_id := "challenge_%s" % label.to_lower().replace(" ", "_")
+	var text := ""
+	if win:
+		text = "🛡️ %s resistió. Reforzaste los cortafuegos y las sombras retroceden, pero otro ataque ya viaja por la fibra." % label
+	else:
+		text = "⚠️ %s quedó comprometido. El malware grabó su marca en los registros; reagruparte es vital antes de que la raíz se marchite." % label
+	var priority: ClippyEvent.Priority = ClippyEvent.Priority.HIGH if win else ClippyEvent.Priority.NORMAL
+	var completion := 0.65 if win else 0.45
+	_send_lore_message(text, context_id, priority, completion)
+
+func _broadcast_finale_lore() -> void:
+	if _final_lore_sent:
+		return
+	_final_lore_sent = true
+	var finale_text := "🏁 La raíz del bosque de datos volvió a brillar. Con %d créditos de integridad sellaste la brecha y dejaste una historia que los analistas susurrarán en sus foros clandestinos." % score
+	_send_lore_message(finale_text, "finale", ClippyEvent.Priority.CRITICAL, 1.0)
+
+func _send_lore_message(text: String, context_id: String, priority: ClippyEvent.Priority, completion: float) -> void:
+	if text.is_empty():
+		return
+	if not has_node("/root/Clippy"):
+		return
+	var event := ClippyEventResource.new()
+	event.event_type = ClippyEvent.EventType.PROGRESS_UPDATE
+	event.context_id = context_id
+	event.priority = priority
+	event.payload = {
+		"completion": clampf(completion, 0.0, 1.0),
+		"custom_text": text
+	}
+	get_node("/root/Clippy").handle_event(event)
+
+func _node_display_label(node: TreeNode) -> String:
+	if node == null:
+		return "nodo desconocido"
+	if node.app_resource != null and node.app_resource.app_name != "":
+		return node.app_resource.app_name
+	return "nodo %s" % _node_type_name(node)
